@@ -180,7 +180,7 @@
 <div class="container">
   <div class="header">
     <h1>⚖️ Liquidador Judicial Pro</h1>
-    <p>Intereses civiles, corrientes y moratorios — Metodología Superintendencia Financiera de Colombia</p>
+    <p>Liquidador de intereses civiles, corrientes y moratorios</p>
   </div>
   <div class="content">
  
@@ -283,7 +283,7 @@
       </div>
  
       <button type="submit" class="btn-submit" id="btnSubmit">
-        📊 Generar liquidación en Google Sheets
+        📄 Generar liquidación en PDF
       </button>
  
     </form>
@@ -370,13 +370,21 @@
     });
  
     google.script.run
-      .withSuccessHandler(function(url) {
+      .withSuccessHandler(function(html) {
         document.getElementById('loading').style.display = 'none';
         btn.disabled = false;
+        // Abrir HTML en ventana nueva — el usuario imprime o guarda como PDF
+        var ventana = window.open('', '_blank');
+        ventana.document.open();
+        ventana.document.write(html);
+        ventana.document.close();
+        // Mostrar botón de descarga también en el formulario
         var msg = document.getElementById('successMessage');
         msg.style.display = 'block';
-        msg.innerHTML = '✅ <strong>Liquidación generada exitosamente</strong><br>' +
-          '<a href="' + url + '" target="_blank">📊 Abrir Google Sheet →</a>';
+        msg.innerHTML = '✅ <strong>Liquidación lista.</strong> ' +
+          'Se abrió en una nueva pestaña. ' +
+          'Para descargar el PDF: <strong>Ctrl+P → Guardar como PDF</strong>.<br>' +
+          '<small style="color:#555">Si no se abrió, revisa que el navegador no bloqueó la ventana emergente.</small>';
       })
       .withFailureHandler(function(err) {
         document.getElementById('loading').style.display = 'none';
