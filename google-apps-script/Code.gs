@@ -1,39 +1,24 @@
-// ⚖️ LIQUIDADOR JUDICIAL PRO — v3.0
-// Metodología: Superintendencia Financiera de Colombia
-// Fuente tasas: https://www.superfinanciera.gov.co/publicaciones/10829/
+// ⚖️ LIQUIDADOR JUDICIAL PRO — v3.1
+// Tres modalidades de interés según uso judicial colombiano:
+//   CIVIL     → 6% EA fijo, interés simple (Art. 1617 C.C.)
+//               Uso: sentencias, alimentos, RCE, obligaciones civiles puras
+//   CORRIENTE → IBC SFC modalidad consumo y ordinario
+//               Uso: ejecutivos comerciales (interés pactado o corriente)
+//   MORATORIO → IBC × 1.5 (tasa de usura — Art. 884 C.Co)
+//               Uso: mora en ejecutivos comerciales, cuando la ley o el contrato lo prevén
 //
-// LÓGICA CORRECTA (según SFC):
-//   1. El capital NO se capitaliza. Los intereses se calculan siempre sobre
-//      el capital inicial (anatocismo prohibido — Art. 886 C.Co / Art. 1617 C.C.)
-//   2. Tasa diaria = (1 + TEA)^(1/días_año) − 1  (año bisiesto = 366, normal = 365)
-//   3. Interés período = Capital × tasa_diaria × número_de_días
-//   4. Tipos de interés:
-//        CORRIENTE  → Interés Bancario Corriente (IBC) modalidad consumo y ordinario
-//        MORATORIO  → IBC × 1.5  (tasa de usura — Art. 884 C.Co)
-//   5. Los intereses se liquidan desde el día siguiente al vencimiento hasta
-//      el día del pago, ambos inclusive.
-//   6. Los abonos se aplican primero a intereses, luego a capital.
-//      El saldo de capital reducido cambia la base de cálculo en adelante.
-//   7. Tasa diaria se expresa con 10 decimales (precisión SFC).
+// Fórmula tasa diaria: (1 + TEA)^(1/días_año) − 1
+// Los intereses NUNCA se capitalizan (anatocismo prohibido)
+// Capital civil: interés simple estricto → capital × 0.06 × (días/días_año)
+// Años bisiestos: 366 días automático
 //
-// TASAS IBC — Actualizar mensualmente desde la SFC.
-// La SFC certifica bimestralmente o mensualmente según período.
-// Ruta: superfinanciera.gov.co → Sala de prensa → Interés Bancario Corriente
-// ─────────────────────────────────────────────────────────────────────────────
+// Fuente tasas IBC: https://www.superfinanciera.gov.co/publicaciones/10829/
 
-// ─── TABLA DE TASAS IBC (Interés Bancario Corriente) ─────────────────────────
-// Formato: "AAAA-MM-DD": tasa_EA_decimal  (fecha de vigencia → aplica hasta
-// la vigencia siguiente exclusive)
-// Fuente: Resoluciones SFC publicadas en el enlace arriba indicado.
-//
-// IMPORTANTE: La SFC certifica la tasa con vigencia desde una fecha específica.
-// Se usa la tasa vigente en cada día del período de liquidación.
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── TABLA DE TASAS IBC ───────────────────────────────────────────────────────
+// Actualizar cuando la SFC certifique nuevos períodos (cada ~2 meses)
+// Formato: { desde: "AAAA-MM-DD", corriente: TEA_decimal }
+// usura = corriente × 1.5 (calculado automáticamente)
 var TASAS_IBC = [
-  // Formato: { desde: "AAAA-MM-DD", corriente: X.XXXX }
-  // corriente = TEA del IBC modalidad consumo y ordinario (decimal, ej: 0.2194)
-  // usura     = corriente × 1.5 (se calcula automáticamente)
-
   // 2018
   { desde: "2018-01-01", corriente: 0.1953 },
   { desde: "2018-03-01", corriente: 0.1953 },
@@ -90,9 +75,10 @@ var TASAS_IBC = [
   { desde: "2025-07-01", corriente: 0.1938 },
   { desde: "2025-09-01", corriente: 0.1912 },
   { desde: "2025-11-01", corriente: 0.1894 },
-  // 2026 — ← Añadir aquí cuando la SFC certifique nuevos períodos
+  // 2026 — actualizar cuando la SFC certifique nuevos períodos
   { desde: "2026-01-01", corriente: 0.1953 },
   { desde: "2026-03-01", corriente: 0.2040 }
+  // ← Añadir aquí: { desde: "2026-05-01", corriente: 0.XXXX }
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -109,17 +95,18 @@ function doGet() {
 // ─────────────────────────────────────────────────────────────────────────────
 function generarLiquidacionSheet(formulario) {
 
-  // ── PARSEO Y VALIDACIÓN ──────────────────────────────────────────────────
-  var capitalOriginal = parseFloat(formulario.capital.replace(/\./g, ''));
-  if (isNaN(capitalOriginal) || capitalOriginal <= 0)
+  // ── 1. VALIDACIÓN ──────────────────────────────────────────────────────────
+  var capital = parseFloat(formulario.capital.replace(/\./g, ''));
+  if (isNaN(capital) || capital <= 0)
     throw new Error("El capital debe ser un número positivo.");
 
-  var tipoInteres = formulario.tipoInteres; // "CORRIENTE" o "MORATORIO"
-  if (tipoInteres !== "CORRIENTE" && tipoInteres !== "MORATORIO")
-    throw new Error("Tipo de interés inválido. Use CORRIENTE o MORATORIO.");
+  var tipoInteres = formulario.tipoInteres;
+  if (tipoInteres !== "CIVIL" && tipoInteres !== "CORRIENTE" && tipoInteres !== "MORATORIO")
+    throw new Error("Tipo de interés inválido. Use CIVIL, CORRIENTE o MORATORIO.");
 
   var agencias = formulario.agencias ? parseFloat(formulario.agencias.replace(/\./g, '')) : 0;
   var costas   = formulario.costas   ? parseFloat(formulario.costas.replace(/\./g, ''))   : 0;
+  var capitalOriginal = capital;
 
   var pI = formulario.fechaInicio.split("-");
   var fechaInicio = new Date(+pI[0], +pI[1]-1, +pI[2]);
@@ -130,10 +117,10 @@ function generarLiquidacionSheet(formulario) {
   if (fechaInicio > fechaFin)
     throw new Error("La fecha de inicio de mora debe ser anterior o igual a la fecha de pago.");
 
-  // ── ABONOS ───────────────────────────────────────────────────────────────
+  // ── 2. ABONOS ──────────────────────────────────────────────────────────────
   var abonos = [];
   if (formulario.abonoFecha && formulario.abonoValor) {
-    var aFechas = Array.isArray(formulario.abonoFecha) ? formulario.abonoFecha : [formulario.abonoFecha];
+    var aFechas  = Array.isArray(formulario.abonoFecha)  ? formulario.abonoFecha  : [formulario.abonoFecha];
     var aValores = Array.isArray(formulario.abonoValor) ? formulario.abonoValor : [formulario.abonoValor];
     for (var i = 0; i < aFechas.length; i++) {
       if (!aFechas[i] || !aValores[i]) continue;
@@ -146,32 +133,34 @@ function generarLiquidacionSheet(formulario) {
     abonos.sort(function(a, b){ return a.fecha - b.fecha; });
   }
 
-  // ── LOOP DE LIQUIDACIÓN DÍA A DÍA ───────────────────────────────────────
-  // La SFC cambia la tasa en fechas específicas (no siempre el 1ro del mes).
-  // Necesitamos cortar el período cada vez que cambia la tasa.
-  // Estrategia: agrupar días por tramo de tasa + aplicar abonos como cortes.
+  // ── 3. CONSTRUCCIÓN DE TRAMOS ──────────────────────────────────────────────
+  // Para CIVIL: un solo tramo (tasa fija, no cambia)
+  // Para CORRIENTE/MORATORIO: cortes por cambio de IBC + fechas de abonos
 
-  var capital = capitalOriginal; // Capital mutable (se reduce con abonos a capital)
-  var interesAcumulado = 0;      // Sin redondeo intermedio
-  var lineas = [];
-  var tasasUsadas = [];          // Para hoja de trazabilidad
+  var capital    = capitalOriginal;
+  var interesAcum = 0;
+  var lineas     = [];
 
-  // Construir lista de fechas de corte: cambios de tasa + fechas de abono
-  var fechasCorte = [fechaFin]; // siempre termina en fechaFin
+  // Fechas de corte
+  var fechasCorte = [fechaFin];
 
-  // Cortes por cambio de tasa
-  for (var t = 0; t < TASAS_IBC.length; t++) {
-    var fCorte = parseFecha(TASAS_IBC[t].desde);
-    if (fCorte > fechaInicio && fCorte <= fechaFin) {
-      fechasCorte.push(fCorte);
+  if (tipoInteres !== "CIVIL") {
+    // Cortes por cambio de IBC
+    for (var t = 0; t < TASAS_IBC.length; t++) {
+      var fCorte = parseFecha(TASAS_IBC[t].desde);
+      if (fCorte > fechaInicio && fCorte <= fechaFin) {
+        fechasCorte.push(fCorte);
+      }
     }
   }
+
   // Cortes por abonos
   for (var a = 0; a < abonos.length; a++) {
     fechasCorte.push(abonos[a].fecha);
   }
+
   // Ordenar y deduplicar
-  fechasCorte.sort(function(a,b){ return a-b; });
+  fechasCorte.sort(function(a, b){ return a - b; });
   var cortesUnicos = [];
   var prevMs = -1;
   for (var c = 0; c < fechasCorte.length; c++) {
@@ -181,34 +170,47 @@ function generarLiquidacionSheet(formulario) {
     }
   }
 
-  // Iterar tramos
+  // ── 4. LOOP DE LIQUIDACIÓN ─────────────────────────────────────────────────
   var desdeTramo = fechaInicio;
 
   for (var c = 0; c < cortesUnicos.length; c++) {
     var hastaTramo = cortesUnicos[c];
     if (hastaTramo < desdeTramo) continue;
 
-    // Tasa vigente al inicio de este tramo
-    var ibcVigente = obtenerIBC(desdeTramo);
-    var teaAplicable = (tipoInteres === "MORATORIO") ? ibcVigente * 1.5 : ibcVigente;
-
-    // Días del año (366 si bisiesto)
+    // Días del año (bisiesto automático)
     var diasAnio = esBisiesto(desdeTramo.getFullYear()) ? 366 : 365;
 
-    // Tasa diaria con 10 decimales de precisión
-    var tasaDiaria = parseFloat((Math.pow(1 + teaAplicable, 1 / diasAnio) - 1).toFixed(10));
+    // Días del tramo (inclusive en ambos extremos para el último período)
+    var nDias = diasEntreFechas(desdeTramo, hastaTramo);
+    if (hastaTramo.getTime() === fechaFin.getTime()) nDias += 1;
 
-    // Días del tramo: desde desdeTramo hasta hastaTramo inclusive
-    var nDias = diasEntreFechas(desdeTramo, hastaTramo) + 1;
+    // ── Tasa según modalidad ──
+    var teaIBC       = 0;
+    var teaAplicada  = 0;
+    var tasaDiaria   = 0;
+    var interesTramo = 0;
 
-    // Interés del tramo (sobre capital ACTUAL, no capitalizado)
-    var interesTramo = capital * tasaDiaria * nDias;
-    interesAcumulado += interesTramo;
+    if (tipoInteres === "CIVIL") {
+      // Interés simple 6% EA — Art. 1617 C.C.
+      // No se convierte a diaria con fórmula compuesta; es proporcional lineal
+      teaIBC      = 0.06;
+      teaAplicada = 0.06;
+      tasaDiaria  = parseFloat((0.06 / diasAnio).toFixed(10));
+      interesTramo = capital * tasaDiaria * nDias;
 
-    // ¿Hay abono en hastaTramo?
-    var abonoDia = 0;
-    var abonoAInt = 0;
-    var abonoACap = 0;
+    } else {
+      // CORRIENTE o MORATORIO — IBC SFC
+      teaIBC      = obtenerIBC(desdeTramo);
+      teaAplicada = (tipoInteres === "MORATORIO") ? teaIBC * 1.5 : teaIBC;
+      // Fórmula SFC: (1 + TEA)^(1/días_año) − 1
+      tasaDiaria  = parseFloat((Math.pow(1 + teaAplicada, 1 / diasAnio) - 1).toFixed(10));
+      interesTramo = capital * tasaDiaria * nDias;
+    }
+
+    interesAcum += interesTramo;
+
+    // ── Aplicar abonos del día hastaTramo ──
+    var abonoDia = 0, abonoAInt = 0, abonoACap = 0;
     for (var a = 0; a < abonos.length; a++) {
       if (!abonos[a].aplicado && abonos[a].fecha.getTime() === hastaTramo.getTime()) {
         abonoDia += abonos[a].valor;
@@ -216,51 +218,51 @@ function generarLiquidacionSheet(formulario) {
       }
     }
     if (abonoDia > 0) {
-      if (abonoDia <= interesAcumulado) {
-        // El abono no alcanza ni los intereses
+      if (abonoDia <= interesAcum) {
         abonoAInt = abonoDia;
-        interesAcumulado -= abonoAInt;
+        interesAcum -= abonoAInt;
       } else {
-        // El abono cubre intereses y parte o todo del capital
-        abonoAInt = interesAcumulado;
-        interesAcumulado = 0;
-        abonoACap = abonoDia - abonoAInt;
-        capital = Math.max(0, capital - abonoACap);
+        abonoAInt   = interesAcum;
+        interesAcum = 0;
+        abonoACap   = abonoDia - abonoAInt;
+        capital     = Math.max(0, capital - abonoACap);
       }
     }
 
-    // Registrar tasa para trazabilidad
-    var keyTasa = ibcVigente.toFixed(4);
-    if (tasasUsadas.indexOf(keyTasa) === -1) tasasUsadas.push(keyTasa);
-
     lineas.push({
-      desde:          desdeTramo,
-      hasta:          hastaTramo,
-      dias:           nDias,
-      diasAnio:       diasAnio,
-      teaIBC:         ibcVigente,
-      teaAplicada:    teaAplicable,
-      tasaDiaria:     tasaDiaria,
-      capital:        capital + abonoACap,   // capital AL INICIO del tramo
-      interesTramo:   interesTramo,
-      abono:          abonoDia,
-      abonoAInt:      abonoAInt,
-      abonoACap:      abonoACap,
-      saldoInteres:   interesAcumulado,
-      saldoCapital:   capital
+      desde:        desdeTramo,
+      hasta:        hastaTramo,
+      dias:         nDias,
+      diasAnio:     diasAnio,
+      teaIBC:       teaIBC,
+      teaAplicada:  teaAplicada,
+      tasaDiaria:   tasaDiaria,
+      capitalBase:  capital + abonoACap,
+      interesTramo: interesTramo,
+      abono:        abonoDia,
+      abonoAInt:    abonoAInt,
+      abonoACap:    abonoACap,
+      saldoInteres: interesAcum,
+      saldoCapital: capital
     });
 
     if (capital <= 0) break;
+    if (hastaTramo.getTime() >= fechaFin.getTime()) break;
 
-    // Avanzar: si el corte fue por abono y no por fin, el día siguiente es nuevo tramo
-    if (hastaTramo.getTime() < fechaFin.getTime()) {
-      desdeTramo = new Date(hastaTramo.getFullYear(), hastaTramo.getMonth(), hastaTramo.getDate() + 1);
-    } else {
-      break;
-    }
+    desdeTramo = new Date(
+      hastaTramo.getFullYear(),
+      hastaTramo.getMonth(),
+      hastaTramo.getDate() + 1
+    );
   }
 
-  // ── CREAR GOOGLE SHEET ───────────────────────────────────────────────────
+  // ── 5. CREAR GOOGLE SHEET ──────────────────────────────────────────────────
+  var etiquetaTipo = {
+    "CIVIL":     "CIVIL (6% EA — Art. 1617 C.C.)",
+    "CORRIENTE": "CORRIENTE (IBC SFC)",
+    "MORATORIO": "MORATORIO (IBC × 1.5 — Art. 884 C.Co)"
+  }[tipoInteres];
+
   var libro = SpreadsheetApp.create(
     "Liquidacion_" + tipoInteres + "_" + formulario.fechaInicio
   );
@@ -268,26 +270,27 @@ function generarLiquidacionSheet(formulario) {
   hoja.setName("Liquidación");
 
   // Encabezado
-  var titulo = "LIQUIDACIÓN DE INTERESES — " + tipoInteres +
-    (tipoInteres === "MORATORIO" ? " (IBC × 1.5)" : " (IBC)");
-  hoja.getRange("A1").setValue(titulo).setFontWeight("bold").setFontSize(13);
+  hoja.getRange("A1").setValue("LIQUIDACIÓN DE INTERESES — " + etiquetaTipo)
+    .setFontWeight("bold").setFontSize(13);
   hoja.getRange("A2").setValue("Fuente tasas: Superintendencia Financiera de Colombia")
-    .setFontColor("#555555");
+    .setFontColor("#555555").setFontSize(11);
 
-  hoja.getRange("A4:B4").setValues([["Capital base:", capitalOriginal]]);
-  hoja.getRange("B4").setNumberFormat('$ #,##0.00');
-  hoja.getRange("A5:B5").setValues([["Fecha inicio mora:", Utilities.formatDate(fechaInicio, Session.getScriptTimeZone(), "dd/MM/yyyy")]]);
-  hoja.getRange("A6:B6").setValues([["Fecha de pago:", Utilities.formatDate(fechaFin,   Session.getScriptTimeZone(), "dd/MM/yyyy")]]);
-  hoja.getRange("A7:B7").setValues([["Tipo de interés:", tipoInteres]]);
-  hoja.getRange("A4:A7").setFontWeight("bold");
+  hoja.getRange("A4").setValue("Capital base:").setFontWeight("bold");
+  hoja.getRange("B4").setValue(capitalOriginal).setNumberFormat('$ #,##0.00');
+  hoja.getRange("A5").setValue("Inicio mora:").setFontWeight("bold");
+  hoja.getRange("B5").setValue(Utilities.formatDate(fechaInicio, Session.getScriptTimeZone(), "dd/MM/yyyy"));
+  hoja.getRange("A6").setValue("Fecha pago:").setFontWeight("bold");
+  hoja.getRange("B6").setValue(Utilities.formatDate(fechaFin, Session.getScriptTimeZone(), "dd/MM/yyyy"));
+  hoja.getRange("A7").setValue("Régimen:").setFontWeight("bold");
+  hoja.getRange("B7").setValue(etiquetaTipo);
 
-  // Encabezados tabla
+  // Cabecera tabla
   var headers = [
-    "Desde", "Hasta", "Días", "Año", "IBC EA",
-    "Tasa Aplicada EA", "Tasa Diaria (10 dec.)",
-    "Capital Base", "Interés Tramo",
-    "Abono Total", "A Intereses", "A Capital",
-    "Saldo Intereses", "Saldo Capital"
+    "Desde", "Hasta", "Días", "Año",
+    "IBC EA", "Tasa aplicada EA", "Tasa diaria (10 dec.)",
+    "Capital base", "Interés tramo",
+    "Abono", "A intereses", "A capital",
+    "Saldo intereses", "Saldo capital"
   ];
   var fila = 9;
   hoja.getRange(fila, 1, 1, headers.length)
@@ -300,17 +303,17 @@ function generarLiquidacionSheet(formulario) {
   hoja.setRowHeight(fila, 40);
   fila++;
 
-  // Datos
+  // Filas de datos
   var filasDatos = lineas.map(function(l) {
     return [
-      Utilities.formatDate(l.desde,  Session.getScriptTimeZone(), "dd/MM/yyyy"),
-      Utilities.formatDate(l.hasta,  Session.getScriptTimeZone(), "dd/MM/yyyy"),
+      Utilities.formatDate(l.desde, Session.getScriptTimeZone(), "dd/MM/yyyy"),
+      Utilities.formatDate(l.hasta, Session.getScriptTimeZone(), "dd/MM/yyyy"),
       l.dias,
       l.diasAnio,
-      l.teaIBC,            // IBC certificado
-      l.teaAplicada,       // IBC o IBC×1.5
-      l.tasaDiaria,        // 10 decimales
-      l.capital + l.abonoACap,  // capital al inicio del tramo
+      l.teaIBC,
+      l.teaAplicada,
+      l.tasaDiaria,
+      l.capitalBase,
       Math.round(l.interesTramo * 100) / 100,
       l.abono    > 0 ? l.abono    : "-",
       l.abonoAInt > 0 ? l.abonoAInt : "-",
@@ -325,15 +328,11 @@ function generarLiquidacionSheet(formulario) {
       .setValues(filasDatos)
       .setHorizontalAlignment("center");
 
-    // Formato porcentajes
-    hoja.getRange(fila, 5, filasDatos.length, 3).setNumberFormat("0.0000%");
-    // Tasa diaria con más decimales
+    hoja.getRange(fila, 5, filasDatos.length, 2).setNumberFormat("0.00%");
     hoja.getRange(fila, 7, filasDatos.length, 1).setNumberFormat("0.0000000000%");
-    // Monedas
     hoja.getRange(fila, 8, filasDatos.length, 2).setNumberFormat('$ #,##0.00');
     hoja.getRange(fila, 13, filasDatos.length, 2).setNumberFormat('$ #,##0.00');
 
-    // Colores alternados
     for (var r = 0; r < filasDatos.length; r++) {
       if (r % 2 === 0) {
         hoja.getRange(fila + r, 1, 1, headers.length).setBackground("#f2f7fc");
@@ -342,27 +341,28 @@ function generarLiquidacionSheet(formulario) {
     fila += filasDatos.length;
   }
 
-  // ── RESUMEN FINAL ────────────────────────────────────────────────────────
+  // ── Resumen final ──
   fila += 1;
-  var intFinal = Math.round(interesAcumulado * 100) / 100;
-  var capFinal = Math.round(capital * 100) / 100;
+  var intFinal  = Math.round(interesAcum * 100) / 100;
+  var capFinal  = Math.round(capital * 100) / 100;
   var granTotal = capFinal + intFinal + agencias + costas;
 
   var resumen = [
-    ["CAPITAL FINAL:",    capFinal],
-    ["INTERESES:",        intFinal]
+    ["Capital final:", capFinal],
+    ["Intereses:",     intFinal]
   ];
-  if (agencias > 0) resumen.push(["AGENCIAS EN COSTAS:", agencias]);
-  if (costas > 0)   resumen.push(["COSTAS:",             costas]);
+  if (agencias > 0) resumen.push(["Agencias en costas:", agencias]);
+  if (costas   > 0) resumen.push(["Costas:",             costas]);
   resumen.push(["GRAN TOTAL:", granTotal]);
 
   for (var r = 0; r < resumen.length; r++) {
     var esTotal = (r === resumen.length - 1);
-    hoja.getRange(fila + r, headers.length - 1).setValue(resumen[r][0])
+    hoja.getRange(fila + r, headers.length - 1)
+      .setValue(resumen[r][0])
       .setFontWeight("bold")
       .setHorizontalAlignment("right");
-    var celdaVal = hoja.getRange(fila + r, headers.length);
-    celdaVal.setValue(resumen[r][1]).setNumberFormat('$ #,##0.00');
+    var celda = hoja.getRange(fila + r, headers.length);
+    celda.setValue(resumen[r][1]).setNumberFormat('$ #,##0.00');
     if (esTotal) {
       hoja.getRange(fila + r, headers.length - 1, 1, 2)
         .setBackground("#d4efdf")
@@ -372,46 +372,35 @@ function generarLiquidacionSheet(formulario) {
   }
 
   hoja.autoResizeColumns(1, headers.length);
-  // Columna tasa diaria más ancha para los 10 decimales
-  hoja.setColumnWidth(7, 160);
+  hoja.setColumnWidth(7, 165);
 
-  // ── HOJA DE TRAZABILIDAD ─────────────────────────────────────────────────
-  var hojaT = libro.insertSheet("Tasas IBC Aplicadas");
-  hojaT.getRange("A1").setValue("TASAS IBC APLICADAS EN ESTA LIQUIDACIÓN")
+  // ── Hoja de trazabilidad ──
+  var hojaT = libro.insertSheet("Tasas aplicadas");
+  hojaT.getRange("A1").setValue("TASAS APLICADAS EN ESTA LIQUIDACIÓN")
     .setFontWeight("bold").setFontSize(11);
   hojaT.getRange("A2").setValue(
-    "Fuente: Superintendencia Financiera de Colombia — https://www.superfinanciera.gov.co/publicaciones/10829/"
+    tipoInteres === "CIVIL"
+      ? "Interés civil fijo: 6% EA — Art. 1617 C.C. — tasa diaria = 0.06 / días_año"
+      : "Fuente: Superintendencia Financiera de Colombia — https://www.superfinanciera.gov.co/publicaciones/10829/\nFórmula tasa diaria: (1 + TEA)^(1/días_año) − 1"
   ).setFontColor("#555555");
-  hojaT.getRange("A3").setValue(
-    "Tasa de usura = IBC × 1.5  |  Tasa diaria = (1 + TEA)^(1/días_año) − 1"
-  ).setFontColor("#777777");
 
   var hT = [["Vigencia desde", "IBC Corriente EA", "Usura EA", "Tipo aplicado", "Tasa diaria (10 dec.)"]];
-  hojaT.getRange(5, 1, 1, 5).setValues(hT)
+  hojaT.getRange(4, 1, 1, 5).setValues(hT)
     .setFontWeight("bold").setBackground("#1a3a5c").setFontColor("white");
 
-  // Solo las tasas que realmente se usaron en el rango
-  var filaT = 6;
-  var tasasEnRango = TASAS_IBC.filter(function(t) {
-    var fT = parseFecha(t.desde);
-    return fT <= fechaFin && (fT >= fechaInicio || obtenerIBC(fechaInicio) === t.corriente);
-  });
-  // Deduplica mostrando solo vigencias que coinciden
+  var filaT = 5;
   var vistas = {};
   for (var li = 0; li < lineas.length; li++) {
-    var key = lineas[li].teaIBC.toString();
+    var key = lineas[li].teaIBC.toString() + "_" + lineas[li].diasAnio;
     if (!vistas[key]) {
       vistas[key] = true;
-      var usura = lineas[li].teaIBC * 1.5;
-      var dA    = lineas[li].diasAnio;
-      var tDiaria = Math.pow(1 + lineas[li].teaAplicada, 1/dA) - 1;
       hojaT.getRange(filaT, 1).setValue(
         Utilities.formatDate(lineas[li].desde, Session.getScriptTimeZone(), "dd/MM/yyyy")
       );
       hojaT.getRange(filaT, 2).setValue(lineas[li].teaIBC).setNumberFormat("0.00%");
-      hojaT.getRange(filaT, 3).setValue(usura).setNumberFormat("0.00%");
+      hojaT.getRange(filaT, 3).setValue(lineas[li].teaIBC * 1.5).setNumberFormat("0.00%");
       hojaT.getRange(filaT, 4).setValue(tipoInteres);
-      hojaT.getRange(filaT, 5).setValue(tDiaria).setNumberFormat("0.0000000000%");
+      hojaT.getRange(filaT, 5).setValue(lineas[li].tasaDiaria).setNumberFormat("0.0000000000%");
       filaT++;
     }
   }
@@ -425,8 +414,6 @@ function generarLiquidacionSheet(formulario) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function obtenerIBC(fecha) {
-  // Devuelve la tasa IBC corriente vigente para la fecha dada.
-  // Busca la última entrada cuya fecha "desde" sea <= fecha.
   var tsMs = fecha.getTime();
   var tasaVigente = null;
   for (var i = 0; i < TASAS_IBC.length; i++) {
@@ -439,21 +426,21 @@ function obtenerIBC(fecha) {
   }
   if (tasaVigente === null) {
     throw new Error(
-      "No hay tasa IBC registrada para la fecha " + Utilities.formatDate(fecha, Session.getScriptTimeZone(), "dd/MM/yyyy") +
-      ". Actualice la tabla TASAS_IBC con la certificación de la SFC para ese período."
+      "No hay tasa IBC registrada para la fecha " +
+      Utilities.formatDate(fecha, Session.getScriptTimeZone(), "dd/MM/yyyy") +
+      ". Actualice la tabla TASAS_IBC con la certificación de la SFC para ese período.\n" +
+      "Fuente: https://www.superfinanciera.gov.co/publicaciones/10829/"
     );
   }
   return tasaVigente;
 }
 
 function parseFecha(str) {
-  // "AAAA-MM-DD" → Date local
   var p = str.split("-");
   return new Date(+p[0], +p[1]-1, +p[2]);
 }
 
 function diasEntreFechas(d1, d2) {
-  // Días calendario entre d1 y d2 (sin contar el día inicial)
   var utc1 = Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate());
   var utc2 = Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate());
   return Math.round((utc2 - utc1) / 86400000);
@@ -464,36 +451,26 @@ function esBisiesto(anio) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// UTILIDADES DE MANTENIMIENTO
+// MANTENIMIENTO — ejecutar desde el editor de Apps Script
 // ─────────────────────────────────────────────────────────────────────────────
 
-function agregarTasaIBC(fechaDesde, tasaCorrienteEA) {
-  /**
-   * Añade una nueva tasa al array TASAS_IBC en tiempo de ejecución.
-   * IMPORTANTE: esta función solo actualiza la memoria de la ejecución actual.
-   * Para persistir, DEBE editar manualmente el array TASAS_IBC en el código fuente.
-   *
-   * Uso: agregarTasaIBC("2026-05-01", 0.2100)
-   * Luego copiar ese objeto al array TASAS_IBC en el código.
-   */
-  TASAS_IBC.push({ desde: fechaDesde, corriente: tasaCorrienteEA });
-  TASAS_IBC.sort(function(a, b) { return parseFecha(a.desde) - parseFecha(b.desde); });
-  Logger.log("IBC añadido: desde=" + fechaDesde + " corriente=" + (tasaCorrienteEA*100).toFixed(2) + "%"
-    + " | usura=" + (tasaCorrienteEA*1.5*100).toFixed(2) + "%");
-}
-
 function verificarCobertura(fechaInicioStr, fechaFinStr) {
-  /**
-   * Verifica que la tabla TASAS_IBC cubre el rango dado.
-   * Uso desde editor: verificarCobertura("2022-01-01", "2026-04-30")
-   */
-  var fi = parseFecha(fechaInicioStr);
-  var ff = parseFecha(fechaFinStr);
+  // Uso: verificarCobertura("2022-01-01", "2026-04-30")
   try {
-    obtenerIBC(fi);
-    obtenerIBC(ff);
+    obtenerIBC(parseFecha(fechaInicioStr));
+    obtenerIBC(parseFecha(fechaFinStr));
     Logger.log("✓ Cobertura OK para " + fechaInicioStr + " → " + fechaFinStr);
   } catch(e) {
     Logger.log("✗ " + e.message);
   }
+}
+
+function agregarNuevaTasa(fechaDesde, tasaCorrienteEA) {
+  // Uso: agregarNuevaTasa("2026-05-01", 0.2100)
+  // IMPORTANTE: copiar también al array TASAS_IBC para que persista
+  TASAS_IBC.push({ desde: fechaDesde, corriente: tasaCorrienteEA });
+  TASAS_IBC.sort(function(a, b){ return parseFecha(a.desde) - parseFecha(b.desde); });
+  Logger.log("Tasa añadida: " + fechaDesde + " → corriente=" +
+    (tasaCorrienteEA*100).toFixed(2) + "% | usura=" +
+    (tasaCorrienteEA*1.5*100).toFixed(2) + "%");
 }
