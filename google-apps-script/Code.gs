@@ -15,70 +15,120 @@
 // Fuente tasas IBC: https://www.superfinanciera.gov.co/publicaciones/10829/
 
 // ─── TABLA DE TASAS IBC ───────────────────────────────────────────────────────
-// Actualizar cuando la SFC certifique nuevos períodos (cada ~2 meses)
+// Fuente: Certificaciones mensuales SFC — Resoluciones publicadas en:
+// https://www.superfinanciera.gov.co/publicaciones/10829/
+// Formato: { desde: "AAAA-MM-DD", corriente: TEA_decimal }
+// La tasa rige desde el día 1 del mes indicado hasta el último día de ese mes.
+// usura = corriente × 1.5 (calculado automáticamente)
+// ⚠️ Actualizar el primer día hábil de cada mes con la nueva certificación SFC.
+// ─── TABLA DE TASAS IBC ───────────────────────────────────────────────────────
+// Fuente: Certificaciones mensuales SFC
+// https://www.superfinanciera.gov.co/publicaciones/10829/
+// Datos extraídos de Tasas.ods (tabla histórica oficial)
 // Formato: { desde: "AAAA-MM-DD", corriente: TEA_decimal }
 // usura = corriente × 1.5 (calculado automáticamente)
+// ⚠️ Añadir nueva entrada cada mes con la certificación SFC.
 var TASAS_IBC = [
-  // 2018
-  { desde: "2018-01-01", corriente: 0.1953 },
-  { desde: "2018-03-01", corriente: 0.1953 },
-  { desde: "2018-05-01", corriente: 0.1920 },
-  { desde: "2018-07-01", corriente: 0.1883 },
-  { desde: "2018-09-01", corriente: 0.1870 },
-  { desde: "2018-11-01", corriente: 0.1870 },
-  // 2019
-  { desde: "2019-01-01", corriente: 0.1853 },
-  { desde: "2019-03-01", corriente: 0.1830 },
-  { desde: "2019-05-01", corriente: 0.1802 },
-  { desde: "2019-07-01", corriente: 0.1763 },
-  { desde: "2019-09-01", corriente: 0.1733 },
-  { desde: "2019-11-01", corriente: 0.1710 },
-  // 2020
-  { desde: "2020-01-01", corriente: 0.1697 },
-  { desde: "2020-03-01", corriente: 0.1680 },
-  { desde: "2020-05-01", corriente: 0.1660 },
-  { desde: "2020-07-01", corriente: 0.1637 },
-  { desde: "2020-09-01", corriente: 0.1607 },
-  { desde: "2020-11-01", corriente: 0.1570 },
-  // 2021
-  { desde: "2021-01-01", corriente: 0.1530 },
-  { desde: "2021-03-01", corriente: 0.1498 },
-  { desde: "2021-05-01", corriente: 0.1467 },
-  { desde: "2021-07-01", corriente: 0.1443 },
-  { desde: "2021-09-01", corriente: 0.1430 },
-  { desde: "2021-11-01", corriente: 0.1430 },
-  // 2022
-  { desde: "2022-01-01", corriente: 0.1446 },
-  { desde: "2022-03-01", corriente: 0.1480 },
-  { desde: "2022-05-01", corriente: 0.1552 },
-  { desde: "2022-07-01", corriente: 0.1686 },
-  { desde: "2022-09-01", corriente: 0.1895 },
-  { desde: "2022-11-01", corriente: 0.2116 },
-  // 2023
-  { desde: "2023-01-01", corriente: 0.2323 },
-  { desde: "2023-03-01", corriente: 0.2537 },
-  { desde: "2023-05-01", corriente: 0.2700 },
-  { desde: "2023-07-01", corriente: 0.2786 },
-  { desde: "2023-09-01", corriente: 0.2786 },
-  { desde: "2023-11-01", corriente: 0.2786 },
-  // 2024
-  { desde: "2024-01-01", corriente: 0.2771 },
-  { desde: "2024-03-01", corriente: 0.2697 },
-  { desde: "2024-05-01", corriente: 0.2558 },
-  { desde: "2024-07-01", corriente: 0.2406 },
-  { desde: "2024-09-01", corriente: 0.2271 },
-  { desde: "2024-11-01", corriente: 0.2162 },
-  // 2025
-  { desde: "2025-01-01", corriente: 0.2083 },
-  { desde: "2025-03-01", corriente: 0.2018 },
-  { desde: "2025-05-01", corriente: 0.1972 },
-  { desde: "2025-07-01", corriente: 0.1938 },
-  { desde: "2025-09-01", corriente: 0.1912 },
-  { desde: "2025-11-01", corriente: 0.1894 },
-  // 2026 — actualizar cuando la SFC certifique nuevos períodos
-  { desde: "2026-01-01", corriente: 0.1953 },
-  { desde: "2026-03-01", corriente: 0.2040 }
-  // ← Añadir aquí: { desde: "2026-05-01", corriente: 0.XXXX }
+  { desde: '2018-01-01', corriente: 0.2069 },  // 20.69%
+  { desde: '2018-02-01', corriente: 0.2101 },  // 21.01%
+  { desde: '2018-03-01', corriente: 0.2068 },  // 20.68%
+  { desde: '2018-04-01', corriente: 0.2048 },  // 20.48%
+  { desde: '2018-05-01', corriente: 0.2044 },  // 20.44%
+  { desde: '2018-06-01', corriente: 0.2028 },  // 20.28%
+  { desde: '2018-07-01', corriente: 0.2003 },  // 20.03%
+  { desde: '2018-08-01', corriente: 0.1994 },  // 19.94%
+  { desde: '2018-09-01', corriente: 0.1981 },  // 19.81%
+  { desde: '2018-10-01', corriente: 0.1963 },  // 19.63%
+  { desde: '2018-11-01', corriente: 0.1949 },  // 19.49%
+  { desde: '2018-12-01', corriente: 0.194 },  // 19.40%
+  { desde: '2019-01-01', corriente: 0.1916 },  // 19.16%
+  { desde: '2019-02-01', corriente: 0.197 },  // 19.70%
+  { desde: '2019-03-01', corriente: 0.1937 },  // 19.37%
+  { desde: '2019-04-01', corriente: 0.1932 },  // 19.32%
+  { desde: '2019-05-01', corriente: 0.1934 },  // 19.34%
+  { desde: '2019-06-01', corriente: 0.193 },  // 19.30%
+  { desde: '2019-07-01', corriente: 0.1928 },  // 19.28%
+  { desde: '2019-08-01', corriente: 0.1932 },  // 19.32%
+  { desde: '2019-09-01', corriente: 0.1932 },  // 19.32%
+  { desde: '2019-10-01', corriente: 0.191 },  // 19.10%
+  { desde: '2019-11-01', corriente: 0.1903 },  // 19.03%
+  { desde: '2019-12-01', corriente: 0.1891 },  // 18.91%
+  { desde: '2020-01-01', corriente: 0.1877 },  // 18.77%
+  { desde: '2020-02-01', corriente: 0.1906 },  // 19.06%
+  { desde: '2020-03-01', corriente: 0.1895 },  // 18.95%
+  { desde: '2020-04-01', corriente: 0.1869 },  // 18.69%
+  { desde: '2020-05-01', corriente: 0.1819 },  // 18.19%
+  { desde: '2020-06-01', corriente: 0.1812 },  // 18.12%
+  { desde: '2020-07-01', corriente: 0.1812 },  // 18.12%
+  { desde: '2020-08-01', corriente: 0.1829 },  // 18.29%
+  { desde: '2020-09-01', corriente: 0.1835 },  // 18.35%
+  { desde: '2020-10-01', corriente: 0.1809 },  // 18.09%
+  { desde: '2020-11-01', corriente: 0.1784 },  // 17.84%
+  { desde: '2020-12-01', corriente: 0.1746 },  // 17.46%
+  { desde: '2021-01-01', corriente: 0.1732 },  // 17.32%
+  { desde: '2021-02-01', corriente: 0.1754 },  // 17.54%
+  { desde: '2021-03-01', corriente: 0.1741 },  // 17.41%
+  { desde: '2021-04-01', corriente: 0.1731 },  // 17.31%
+  { desde: '2021-05-01', corriente: 0.1722 },  // 17.22%
+  { desde: '2021-06-01', corriente: 0.1721 },  // 17.21%
+  { desde: '2021-07-01', corriente: 0.1718 },  // 17.18%
+  { desde: '2021-08-01', corriente: 0.1724 },  // 17.24%
+  { desde: '2021-09-01', corriente: 0.1719 },  // 17.19%
+  { desde: '2021-10-01', corriente: 0.1708 },  // 17.08%
+  { desde: '2021-11-01', corriente: 0.1727 },  // 17.27%
+  { desde: '2021-12-01', corriente: 0.1746 },  // 17.46%
+  { desde: '2022-01-01', corriente: 0.1766 },  // 17.66%
+  { desde: '2022-02-01', corriente: 0.183 },  // 18.30%
+  { desde: '2022-03-01', corriente: 0.1847 },  // 18.47%
+  { desde: '2022-04-01', corriente: 0.1905 },  // 19.05%
+  { desde: '2022-05-01', corriente: 0.1971 },  // 19.71%
+  { desde: '2022-06-01', corriente: 0.204 },  // 20.40%
+  { desde: '2022-07-01', corriente: 0.2128 },  // 21.28%
+  { desde: '2022-08-01', corriente: 0.2221 },  // 22.21%
+  { desde: '2022-09-01', corriente: 0.235 },  // 23.50%
+  { desde: '2022-10-01', corriente: 0.2461 },  // 24.61%
+  { desde: '2022-11-01', corriente: 0.2578 },  // 25.78%
+  { desde: '2022-12-01', corriente: 0.2764 },  // 27.64%
+  { desde: '2023-01-01', corriente: 0.2884 },  // 28.84%
+  { desde: '2023-02-01', corriente: 0.3018 },  // 30.18%
+  { desde: '2023-03-01', corriente: 0.3084 },  // 30.84%
+  { desde: '2023-04-01', corriente: 0.3139 },  // 31.39%
+  { desde: '2023-05-01', corriente: 0.3027 },  // 30.27%
+  { desde: '2023-06-01', corriente: 0.2976 },  // 29.76%
+  { desde: '2023-07-01', corriente: 0.2936 },  // 29.36%
+  { desde: '2023-08-01', corriente: 0.2875 },  // 28.75%
+  { desde: '2023-09-01', corriente: 0.2803 },  // 28.03%
+  { desde: '2023-10-01', corriente: 0.2653 },  // 26.53%
+  { desde: '2023-11-01', corriente: 0.2552 },  // 25.52%
+  { desde: '2023-12-01', corriente: 0.2504 },  // 25.04%
+  { desde: '2024-01-01', corriente: 0.2332 },  // 23.32%
+  { desde: '2024-02-01', corriente: 0.2331 },  // 23.31%
+  { desde: '2024-03-01', corriente: 0.222 },  // 22.20%
+  { desde: '2024-04-01', corriente: 0.2206 },  // 22.06%
+  { desde: '2024-05-01', corriente: 0.2102 },  // 21.02%
+  { desde: '2024-06-01', corriente: 0.2056 },  // 20.56%
+  { desde: '2024-07-01', corriente: 0.1966 },  // 19.66%
+  { desde: '2024-08-01', corriente: 0.1947 },  // 19.47%
+  { desde: '2024-09-01', corriente: 0.1923 },  // 19.23%
+  { desde: '2024-10-01', corriente: 0.1878 },  // 18.78%
+  { desde: '2024-11-01', corriente: 0.1759 },  // 17.59%
+  { desde: '2024-12-01', corriente: 0.1659 },  // 16.59%
+  { desde: '2025-01-01', corriente: 0.1659 },  // 16.59%
+  { desde: '2025-02-01', corriente: 0.1753 },  // 17.53%
+  { desde: '2025-03-01', corriente: 0.1661 },  // 16.61%
+  { desde: '2025-04-01', corriente: 0.1708 },  // 17.08%
+  { desde: '2025-05-01', corriente: 0.1731 },  // 17.31%
+  { desde: '2025-06-01', corriente: 0.1703 },  // 17.03%
+  { desde: '2025-07-01', corriente: 0.1652 },  // 16.52%
+  { desde: '2025-08-01', corriente: 0.1678 },  // 16.78%
+  { desde: '2025-09-01', corriente: 0.1667 },  // 16.67%
+  { desde: '2025-10-01', corriente: 0.1624 },  // 16.24%
+  { desde: '2025-11-01', corriente: 0.1666 },  // 16.66%
+  { desde: '2025-12-01', corriente: 0.1668 },  // 16.68%
+  { desde: '2026-01-01', corriente: 0.1624 },  // 16.24%
+  { desde: '2026-02-01', corriente: 0.1682 },  // 16.82%
+  { desde: '2026-03-01', corriente: 0.1701 },  // 17.01%
+  { desde: '2026-04-01', corriente: 0.1784 },  // 17.84%
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
