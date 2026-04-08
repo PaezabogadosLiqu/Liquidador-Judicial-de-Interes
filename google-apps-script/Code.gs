@@ -13,7 +13,7 @@
 // Años bisiestos: 366 días automático
 //
 // Fuente tasas IBC: https://www.superfinanciera.gov.co/publicaciones/10829/
-
+ 
 // ─── TABLA DE TASAS IBC ───────────────────────────────────────────────────────
 // Fuente: Certificaciones mensuales SFC — Resoluciones publicadas en:
 // https://www.superfinanciera.gov.co/publicaciones/10829/
@@ -136,7 +136,7 @@ var TASAS_IBC = [
   { desde: '2026-03-01', corriente: 0.1701, nomMensual: 0.0131763, nomMensualMora: 0.01911761 },  // cor 1.3176% | mora 1.9118%
   { desde: '2026-04-01', corriente: 0.1784, nomMensual: 0.01377324, nomMensualMora: 0.01995617 },  // cor 1.3773% | mora 1.9956%
 ];
-
+ 
 // ─────────────────────────────────────────────────────────────────────────────
 // ENTRY POINT
 // ─────────────────────────────────────────────────────────────────────────────
@@ -145,35 +145,35 @@ function doGet() {
     .setTitle('Liquidador Judicial Pro')
     .setSandboxMode(HtmlService.SandboxMode.IFRAME);
 }
-
+ 
 // ─────────────────────────────────────────────────────────────────────────────
 // FUNCIÓN PRINCIPAL
 // ─────────────────────────────────────────────────────────────────────────────
 function generarLiquidacionSheet(formulario) {
-
-
+ 
+ 
   // ── 1. VALIDACIÓN ──────────────────────────────────────────────────────────
   var capital = parseFloat(formulario.capital.replace(/\./g, ''));
   if (isNaN(capital) || capital <= 0)
     throw new Error("El capital debe ser un número positivo.");
-
+ 
   var tipoInteres = formulario.tipoInteres;
   if (tipoInteres !== "CIVIL" && tipoInteres !== "CORRIENTE" && tipoInteres !== "MORATORIO")
     throw new Error("Tipo de interés inválido. Use CIVIL, CORRIENTE o MORATORIO.");
-
+ 
   var agencias = formulario.agencias ? parseFloat(formulario.agencias.replace(/\./g, '')) : 0;
   var costas   = formulario.costas   ? parseFloat(formulario.costas.replace(/\./g, ''))   : 0;
   var capitalOriginal = capital;
-
+ 
   var pI = formulario.fechaInicio.split("-");
   var fechaInicio = new Date(+pI[0], +pI[1]-1, +pI[2]);
-
+ 
   var pF = formulario.fechaFin.split("-");
   var fechaFin = new Date(+pF[0], +pF[1]-1, +pF[2]);
-
+ 
   if (fechaInicio > fechaFin)
     throw new Error("La fecha de inicio de mora debe ser anterior o igual a la fecha de pago.");
-
+ 
   // ── 2. ABONOS ──────────────────────────────────────────────────────────────
   var abonos = [];
   if (formulario.abonoFecha && formulario.abonoValor) {
@@ -189,28 +189,28 @@ function generarLiquidacionSheet(formulario) {
     }
     abonos.sort(function(a, b){ return a.fecha - b.fecha; });
   }
-
+ 
   // ── 3. CONSTRUCCIÓN DE TRAMOS ──────────────────────────────────────────────
   // Cortes por: fin de mes calendario + cambios de tasa + fechas de abonos
   // El período va desde fechaInicio hasta fechaFin INCLUSIVE
-
+ 
   var capital    = capitalOriginal;
   var interesAcum = 0;
   var lineas     = [];
-
+ 
   // Función: último día del mes de una fecha
   function ultimoDiaMes(d) {
     return new Date(d.getFullYear(), d.getMonth() + 1, 0);
   }
-
+ 
   // Función: primer día del mes siguiente
   function primerDiaSigMes(d) {
     return new Date(d.getFullYear(), d.getMonth() + 1, 1);
   }
-
+ 
   // Construir lista de fechas de corte (todas son el ÚLTIMO día de algún período)
   var fechasCorte = [];
-
+ 
   // Cortes por fin de mes calendario entre fechaInicio y fechaFin
   var mesIter = new Date(fechaInicio.getFullYear(), fechaInicio.getMonth(), 1);
   while (mesIter <= fechaFin) {
@@ -221,7 +221,7 @@ function generarLiquidacionSheet(formulario) {
     mesIter = primerDiaSigMes(mesIter);
   }
   fechasCorte.push(new Date(fechaFin.getTime())); // siempre termina en fechaFin
-
+ 
   // Cortes adicionales por cambios de tasa IBC (si ocurren a mitad de mes)
   if (tipoInteres !== "CIVIL") {
     for (var t = 0; t < TASAS_IBC.length; t++) {
@@ -233,12 +233,12 @@ function generarLiquidacionSheet(formulario) {
       }
     }
   }
-
+ 
   // Cortes por abonos
   for (var a = 0; a < abonos.length; a++) {
     fechasCorte.push(new Date(abonos[a].fecha.getTime()));
   }
-
+ 
   // Ordenar y deduplicar
   fechasCorte.sort(function(a, b){ return a - b; });
   var cortesUnicos = [];
@@ -250,24 +250,24 @@ function generarLiquidacionSheet(formulario) {
       prevMs = ms;
     }
   }
-
+ 
   // ── 4. LOOP DE LIQUIDACIÓN ─────────────────────────────────────────────────
   var desdeTramo = new Date(fechaInicio.getTime());
-
+ 
   for (var ci = 0; ci < cortesUnicos.length; ci++) {
     var hastaTramo = cortesUnicos[ci];
     if (hastaTramo.getTime() < desdeTramo.getTime()) continue;
-
+ 
     // Días: inclusivo en ambos extremos (Fin - Ini + 1)
     var nDias = diasEntreFechas(desdeTramo, hastaTramo) + 1;
-
+ 
     // ── Tasa según modalidad ──
     var teaIBC       = 0;
     var teaAplicada  = 0;
     var tasaDiaria   = 0;
     var tasaMensual  = 0;
     var interesTramo = 0;
-
+ 
     if (tipoInteres === "CIVIL") {
       // Interés civil 6% EA — Art. 1617 C.C. — interés simple proporcional
       // Fórmula: capital × (0.06/12) × (días/30)
@@ -276,7 +276,7 @@ function generarLiquidacionSheet(formulario) {
       tasaMensual  = 0.06 / 12;         // 0.5% mensual fijo en decimal
       tasaDiaria   = tasaMensual / 30;
       interesTramo = capital * tasaMensual * (nDias / 30);
-
+ 
     } else {
       // CORRIENTE o MORATORIO — IBC SFC
       // Fórmula: capital × tasaMensual × (días/30)
@@ -291,9 +291,9 @@ function generarLiquidacionSheet(formulario) {
       tasaDiaria   = tasaMensual / 30;
       interesTramo = capital * tasaMensual * (nDias / 30);
     }
-
+ 
     interesAcum += interesTramo;
-
+ 
     // ── Aplicar abonos del día hastaTramo ──
     var abonoDia = 0, abonoAInt = 0, abonoACap = 0;
     for (var a = 0; a < abonos.length; a++) {
@@ -313,12 +313,12 @@ function generarLiquidacionSheet(formulario) {
         capital     = Math.max(0, capital - abonoACap);
       }
     }
-
+ 
     lineas.push({
       desde:        desdeTramo,
       hasta:        hastaTramo,
       dias:         nDias,
-      diasAnio:     diasAnio,
+      diasAnio:     esBisiesto(desdeTramo.getFullYear()) ? 366 : 365,
       teaIBC:       teaIBC,
       teaAplicada:  teaAplicada,
       tasaDiaria:   tasaDiaria,
@@ -331,28 +331,28 @@ function generarLiquidacionSheet(formulario) {
       saldoInteres: interesAcum,
       saldoCapital: capital
     });
-
+ 
     if (capital <= 0) break;
     if (hastaTramo.getTime() >= fechaFin.getTime()) break;
-
+ 
     desdeTramo = new Date(
       hastaTramo.getFullYear(),
       hastaTramo.getMonth(),
       hastaTramo.getDate() + 1
     );
   }
-
+ 
   // ── 5. GENERAR HTML Y DEVOLVER COMO STRING ─────────────────────────────────
   var etiquetaTipo = {
     "CIVIL":     "CIVIL (6% EA — Art. 1617 C.C.)",
     "CORRIENTE": "CORRIENTE (IBC SFC)",
     "MORATORIO": "MORATORIO (IBC x 1.5 — Art. 884 C.Co)"
   }[tipoInteres];
-
+ 
   var intFinal  = Math.round(interesAcum * 100) / 100;
   var capFinal  = Math.round(capital * 100) / 100;
   var granTotal = capFinal + intFinal + agencias + costas;
-
+ 
   function fmt(n) {
     return '$ ' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   }
@@ -365,7 +365,7 @@ function generarLiquidacionSheet(formulario) {
     var yy = d.getFullYear();
     return (dd < 10 ? '0'+dd : dd) + '/' + (mm < 10 ? '0'+mm : mm) + '/' + yy;
   }
-
+ 
   // Filas de la tabla
   var filas = lineas.map(function(l) {
     var abono   = l.abono    > 0 ? fmt(l.abono)    : '-';
@@ -385,16 +385,16 @@ function generarLiquidacionSheet(formulario) {
       '<td class="num">' + fmt(l.saldoCapital) + '</td>' +
     '</tr>';
   }).join('\n');
-
+ 
   // Filas resumen
   var resumenFilas = '<tr class="subtotal"><td colspan="9" class="lbl">Capital final</td><td colspan="2" class="num">' + fmt(capFinal) + '</td></tr>' +
     '<tr class="subtotal"><td colspan="9" class="lbl">Intereses</td><td colspan="2" class="num">' + fmt(intFinal) + '</td></tr>';
   if (agencias > 0) resumenFilas += '<tr class="subtotal"><td colspan="9" class="lbl">Agencias en costas</td><td colspan="2" class="num">' + fmt(agencias) + '</td></tr>';
   if (costas   > 0) resumenFilas += '<tr class="subtotal"><td colspan="9" class="lbl">Costas judiciales</td><td colspan="2" class="num">' + fmt(costas) + '</td></tr>';
   resumenFilas += '<tr class="total"><td colspan="9" class="lbl">GRAN TOTAL</td><td colspan="2" class="num">' + fmt(granTotal) + '</td></tr>';
-
+ 
   var fechaGenerado = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "d/M/yyyy, HH:mm:ss");
-
+ 
   var html = '<!DOCTYPE html><html><head><meta charset="utf-8">' +
   '<title>Liquidacion de Intereses</title>' +
   '<style>' +
@@ -437,14 +437,14 @@ function generarLiquidacionSheet(formulario) {
   '</table>' +
   '<p class="footer">Fuente tasas IBC: Superintendencia Financiera de Colombia — superfinanciera.gov.co</p>' +
   '</body></html>';
-
+ 
   return html;
 }
-
+ 
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
-
+ 
 function obtenerIBCData(fecha) {
   // Devuelve { tea, nomMensual: CorPct/12/100, nomMensualMora: MoraNom/12/100 }
   var tsMs = fecha.getTime();
@@ -471,31 +471,31 @@ function obtenerIBCData(fecha) {
     nomMensualMora: entrada.nomMensualMora
   };
 }
-
+ 
 function obtenerIBC(fecha) {
   // Compatibilidad — devuelve solo la TEA
   return obtenerIBCData(fecha).tea;
 }
-
+ 
 function parseFecha(str) {
   var p = str.split("-");
   return new Date(+p[0], +p[1]-1, +p[2]);
 }
-
+ 
 function diasEntreFechas(d1, d2) {
   var utc1 = Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate());
   var utc2 = Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate());
   return Math.round((utc2 - utc1) / 86400000);
 }
-
+ 
 function esBisiesto(anio) {
   return (anio % 4 === 0 && anio % 100 !== 0) || (anio % 400 === 0);
 }
-
+ 
 // ─────────────────────────────────────────────────────────────────────────────
 // MANTENIMIENTO — ejecutar desde el editor de Apps Script
 // ─────────────────────────────────────────────────────────────────────────────
-
+ 
 function verificarCobertura(fechaInicioStr, fechaFinStr) {
   // Uso: verificarCobertura("2022-01-01", "2026-04-30")
   try {
@@ -506,7 +506,7 @@ function verificarCobertura(fechaInicioStr, fechaFinStr) {
     Logger.log("✗ " + e.message);
   }
 }
-
+ 
 function agregarNuevaTasa(fechaDesde, tasaCorrienteEA) {
   // Uso: agregarNuevaTasa("2026-05-01", 0.2100)
   // IMPORTANTE: copiar también al array TASAS_IBC para que persista
