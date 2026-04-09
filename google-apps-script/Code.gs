@@ -304,7 +304,10 @@ function generarLiquidacionSheet(formulario) {
   '<style>' +
     'body{font-family:Arial,sans-serif;font-size:11px;color:#111;margin:24px}' +
     'h2{font-size:15px;margin:0 0 4px}' +
-    'p.gen{font-size:9px;color:#888;margin:0 0 14px}' +
+    'p.gen{font-size:9px;color:#888;margin:0 0 8px}' +
+    '.btn-pdf{display:inline-block;margin-bottom:16px;padding:9px 20px;background:#1a3a5c;color:#fff;' +
+      'font-size:12px;font-weight:bold;border:none;border-radius:6px;cursor:pointer;font-family:Arial,sans-serif}' +
+    '.btn-pdf:hover{background:#2d5240}' +
     'table.res{border-collapse:collapse;margin-bottom:18px;width:480px}' +
     'table.res td{padding:3px 12px 3px 0;font-size:11px}' +
     'table.res td:first-child{font-weight:bold;color:#444;width:200px}' +
@@ -316,10 +319,11 @@ function generarLiquidacionSheet(formulario) {
     'tr.sub td{background:#eaf3de;font-weight:bold;border-top:1px solid #aaa}' +
     'tr.tot td{background:#d4efdf;font-weight:bold;font-size:12px;border-top:2px solid #2d5240}' +
     'p.src{font-size:9px;color:#888;margin-top:8px}' +
-    '@media print{button{display:none}}' +
+    '@media print{.btn-pdf{display:none}}' +
   '</style></head><body>' +
   '<h2>Liquidacion de Intereses</h2>' +
   '<p class="gen">Generado: ' + fechaGen + '</p>' +
+  '<button class="btn-pdf" onclick="window.print()">⬇ Descargar PDF</button>' +
   '<table class="res">' +
     '<tr><td>Tipo de interes aplicado</td><td>' + etiqueta + '</td></tr>' +
     '<tr><td>Valor de la deuda</td><td>' + fmt(capitalOriginal) + '</td></tr>' +
