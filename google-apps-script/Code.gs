@@ -9,106 +9,106 @@
 // nomMensualMora = MoraNom / 100 / 12  (mora mensual decimal)
 // Añadir cada mes: { desde: 'AAAA-MM-DD', corriente: X, nomMensual: X, nomMensualMora: X }
 var TASAS_IBC = [
-  { desde: '2018-01-01', corriente: 0.2069, nomMensual: 0.01579406, nomMensualMora: 0.02277919 },
-  { desde: '2018-02-01', corriente: 0.2101, nomMensual: 0.01601822, nomMensualMora: 0.02309087 },
-  { desde: '2018-03-01', corriente: 0.2068, nomMensual: 0.01578704, nomMensualMora: 0.02276944 },
-  { desde: '2018-04-01', corriente: 0.2048, nomMensual: 0.01564666, nomMensualMora: 0.02257408 },
-  { desde: '2018-05-01', corriente: 0.2044, nomMensual: 0.01561855, nomMensualMora: 0.02253496 },
-  { desde: '2018-06-01', corriente: 0.2028, nomMensual: 0.01550606, nomMensualMora: 0.02237832 },
-  { desde: '2018-07-01', corriente: 0.2003, nomMensual: 0.01533, nomMensualMora: 0.02213303 },
-  { desde: '2018-08-01', corriente: 0.1994, nomMensual: 0.01526654, nomMensualMora: 0.02204457 },
-  { desde: '2018-09-01', corriente: 0.1981, nomMensual: 0.0151748, nomMensualMora: 0.02191665 },
-  { desde: '2018-10-01', corriente: 0.1963, nomMensual: 0.01504762, nomMensualMora: 0.02173922 },
-  { desde: '2018-11-01', corriente: 0.1949, nomMensual: 0.01494858, nomMensualMora: 0.021601 },
-  { desde: '2018-12-01', corriente: 0.194, nomMensual: 0.01488485, nomMensualMora: 0.02151203 },
-  { desde: '2019-01-01', corriente: 0.1916, nomMensual: 0.0147147, nomMensualMora: 0.02127435 },
-  { desde: '2019-02-01', corriente: 0.197, nomMensual: 0.0150971, nomMensualMora: 0.02180826 },
-  { desde: '2019-03-01', corriente: 0.1937, nomMensual: 0.0148636, nomMensualMora: 0.02148235 },
-  { desde: '2019-04-01', corriente: 0.1932, nomMensual: 0.01482817, nomMensualMora: 0.02143287 },
-  { desde: '2019-05-01', corriente: 0.1934, nomMensual: 0.01484235, nomMensualMora: 0.02145267 },
-  { desde: '2019-06-01', corriente: 0.193, nomMensual: 0.014814, nomMensualMora: 0.02141307 },
-  { desde: '2019-07-01', corriente: 0.1928, nomMensual: 0.01479982, nomMensualMora: 0.02139327 },
-  { desde: '2019-08-01', corriente: 0.1932, nomMensual: 0.01482817, nomMensualMora: 0.02143287 },
-  { desde: '2019-09-01', corriente: 0.1932, nomMensual: 0.01482817, nomMensualMora: 0.02143287 },
-  { desde: '2019-10-01', corriente: 0.191, nomMensual: 0.01467212, nomMensualMora: 0.02121484 },
-  { desde: '2019-11-01', corriente: 0.1903, nomMensual: 0.01462241, nomMensualMora: 0.02114536 },
-  { desde: '2019-12-01', corriente: 0.1891, nomMensual: 0.01453713, nomMensualMora: 0.02102613 },
-  { desde: '2020-01-01', corriente: 0.1877, nomMensual: 0.01443754, nomMensualMora: 0.02088684 },
-  { desde: '2020-02-01', corriente: 0.1906, nomMensual: 0.01464372, nomMensualMora: 0.02117514 },
-  { desde: '2020-03-01', corriente: 0.1895, nomMensual: 0.01456557, nomMensualMora: 0.02106589 },
-  { desde: '2020-04-01', corriente: 0.1869, nomMensual: 0.01438059, nomMensualMora: 0.02080714 },
-  { desde: '2020-05-01', corriente: 0.1819, nomMensual: 0.01402381, nomMensualMora: 0.02030752 },
-  { desde: '2020-06-01', corriente: 0.1812, nomMensual: 0.01397375, nomMensualMora: 0.02023735 },
-  { desde: '2020-07-01', corriente: 0.1812, nomMensual: 0.01397375, nomMensualMora: 0.02023735 },
-  { desde: '2020-08-01', corriente: 0.1829, nomMensual: 0.01409528, nomMensualMora: 0.02040766 },
-  { desde: '2020-09-01', corriente: 0.1835, nomMensual: 0.01413813, nomMensualMora: 0.02046769 },
-  { desde: '2020-10-01', corriente: 0.1809, nomMensual: 0.01395229, nomMensualMora: 0.02020727 },
-  { desde: '2020-11-01', corriente: 0.1784, nomMensual: 0.01377324, nomMensualMora: 0.01995617 },
-  { desde: '2020-12-01', corriente: 0.1746, nomMensual: 0.01350042, nomMensualMora: 0.01957319 },
-  { desde: '2021-01-01', corriente: 0.1732, nomMensual: 0.0133997, nomMensualMora: 0.0194317 },
-  { desde: '2021-02-01', corriente: 0.1754, nomMensual: 0.01355792, nomMensualMora: 0.01965395 },
-  { desde: '2021-03-01', corriente: 0.1741, nomMensual: 0.01346446, nomMensualMora: 0.01952268 },
-  { desde: '2021-04-01', corriente: 0.1731, nomMensual: 0.01339251, nomMensualMora: 0.01942158 },
-  { desde: '2021-05-01', corriente: 0.1722, nomMensual: 0.0133277, nomMensualMora: 0.0193305 },
-  { desde: '2021-06-01', corriente: 0.1721, nomMensual: 0.01332049, nomMensualMora: 0.01932037 },
-  { desde: '2021-07-01', corriente: 0.1718, nomMensual: 0.01329888, nomMensualMora: 0.01928998 },
-  { desde: '2021-08-01', corriente: 0.1724, nomMensual: 0.0133421, nomMensualMora: 0.01935074 },
-  { desde: '2021-09-01', corriente: 0.1719, nomMensual: 0.01330608, nomMensualMora: 0.01930011 },
-  { desde: '2021-10-01', corriente: 0.1708, nomMensual: 0.01322679, nomMensualMora: 0.01918863 },
-  { desde: '2021-11-01', corriente: 0.1727, nomMensual: 0.01336371, nomMensualMora: 0.01938111 },
-  { desde: '2021-12-01', corriente: 0.1746, nomMensual: 0.01350042, nomMensualMora: 0.01957319 },
-  { desde: '2022-01-01', corriente: 0.1766, nomMensual: 0.01364411, nomMensualMora: 0.01977496 },
-  { desde: '2022-02-01', corriente: 0.183, nomMensual: 0.01410242, nomMensualMora: 0.02041767 },
-  { desde: '2022-03-01', corriente: 0.1847, nomMensual: 0.01422378, nomMensualMora: 0.02058764 },
-  { desde: '2022-04-01', corriente: 0.1905, nomMensual: 0.01463662, nomMensualMora: 0.02116522 },
-  { desde: '2022-05-01', corriente: 0.1971, nomMensual: 0.01510416, nomMensualMora: 0.02181812 },
-  { desde: '2022-06-01', corriente: 0.204, nomMensual: 0.01559044, nomMensualMora: 0.02249583 },
-  { desde: '2022-07-01', corriente: 0.2128, nomMensual: 0.01620693, nomMensualMora: 0.02335304 },
-  { desde: '2022-08-01', corriente: 0.2221, nomMensual: 0.01685401, nomMensualMora: 0.02425046 },
-  { desde: '2022-09-01', corriente: 0.235, nomMensual: 0.01774413, nomMensualMora: 0.02548112 },
-  { desde: '2022-10-01', corriente: 0.2461, nomMensual: 0.01850326, nomMensualMora: 0.02652721 },
-  { desde: '2022-11-01', corriente: 0.2578, nomMensual: 0.01929674, nomMensualMora: 0.02761729 },
-  { desde: '2022-12-01', corriente: 0.2764, nomMensual: 0.02054434, nomMensualMora: 0.02932448 },
-  { desde: '2023-01-01', corriente: 0.2884, nomMensual: 0.02134044, nomMensualMora: 0.03040959 },
-  { desde: '2023-02-01', corriente: 0.3018, nomMensual: 0.02222141, nomMensualMora: 0.03160662 },
-  { desde: '2023-03-01', corriente: 0.3084, nomMensual: 0.02265227, nomMensualMora: 0.03219063 },
-  { desde: '2023-04-01', corriente: 0.3139, nomMensual: 0.02300981, nomMensualMora: 0.03267455 },
-  { desde: '2023-05-01', corriente: 0.3027, nomMensual: 0.02228028, nomMensualMora: 0.03168647 },
-  { desde: '2023-06-01', corriente: 0.2976, nomMensual: 0.02194618, nomMensualMora: 0.03123307 },
-  { desde: '2023-07-01', corriente: 0.2936, nomMensual: 0.0216833, nomMensualMora: 0.03087593 },
-  { desde: '2023-08-01', corriente: 0.2875, nomMensual: 0.02128096, nomMensualMora: 0.03032864 },
-  { desde: '2023-09-01', corriente: 0.2803, nomMensual: 0.02080382, nomMensualMora: 0.02967852 },
-  { desde: '2023-10-01', corriente: 0.2653, nomMensual: 0.01980183, nomMensualMora: 0.02830943 },
-  { desde: '2023-11-01', corriente: 0.2552, nomMensual: 0.01912099, nomMensualMora: 0.02737615 },
-  { desde: '2023-12-01', corriente: 0.2504, nomMensual: 0.01879567, nomMensualMora: 0.02692932 },
-  { desde: '2024-01-01', corriente: 0.2332, nomMensual: 0.01762044, nomMensualMora: 0.02531037 },
-  { desde: '2024-02-01', corriente: 0.2331, nomMensual: 0.01761357, nomMensualMora: 0.02530088 },
-  { desde: '2024-03-01', corriente: 0.222, nomMensual: 0.01684707, nomMensualMora: 0.02424086 },
-  { desde: '2024-04-01', corriente: 0.2206, nomMensual: 0.01674995, nomMensualMora: 0.0241063 },
-  { desde: '2024-05-01', corriente: 0.2102, nomMensual: 0.01602522, nomMensualMora: 0.0231006 },
-  { desde: '2024-06-01', corriente: 0.2056, nomMensual: 0.01570284, nomMensualMora: 0.02265227 },
-  { desde: '2024-07-01', corriente: 0.1966, nomMensual: 0.01506883, nomMensualMora: 0.02176882 },
-  { desde: '2024-08-01', corriente: 0.1947, nomMensual: 0.01493442, nomMensualMora: 0.02158123 },
-  { desde: '2024-09-01', corriente: 0.1923, nomMensual: 0.01476436, nomMensualMora: 0.02134374 },
-  { desde: '2024-10-01', corriente: 0.1878, nomMensual: 0.01444466, nomMensualMora: 0.02089679 },
-  { desde: '2024-11-01', corriente: 0.1759, nomMensual: 0.01359384, nomMensualMora: 0.01970439 },
-  { desde: '2024-12-01', corriente: 0.1659, nomMensual: 0.01287275, nomMensualMora: 0.01869037 },
-  { desde: '2025-01-01', corriente: 0.1659, nomMensual: 0.01287275, nomMensualMora: 0.01869037 },
-  { desde: '2025-02-01', corriente: 0.1753, nomMensual: 0.01355074, nomMensualMora: 0.01964386 },
-  { desde: '2025-03-01', corriente: 0.1661, nomMensual: 0.01288723, nomMensualMora: 0.01871076 },
-  { desde: '2025-04-01', corriente: 0.1708, nomMensual: 0.01322679, nomMensualMora: 0.01918863 },
-  { desde: '2025-05-01', corriente: 0.1731, nomMensual: 0.01339251, nomMensualMora: 0.01942158 },
-  { desde: '2025-06-01', corriente: 0.1703, nomMensual: 0.01319073, nomMensualMora: 0.01913791 },
-  { desde: '2025-07-01', corriente: 0.1652, nomMensual: 0.01282206, nomMensualMora: 0.01861897 },
-  { desde: '2025-08-01', corriente: 0.1678, nomMensual: 0.01301019, nomMensualMora: 0.01888389 },
-  { desde: '2025-09-01', corriente: 0.1667, nomMensual: 0.01293064, nomMensualMora: 0.0187719 },
-  { desde: '2025-10-01', corriente: 0.1624, nomMensual: 0.01261902, nomMensualMora: 0.01833283 },
-  { desde: '2025-11-01', corriente: 0.1666, nomMensual: 0.01292341, nomMensualMora: 0.01876172 },
-  { desde: '2025-12-01', corriente: 0.1668, nomMensual: 0.01293788, nomMensualMora: 0.01878209 },
-  { desde: '2026-01-01', corriente: 0.1624, nomMensual: 0.01261902, nomMensualMora: 0.01833283 },
-  { desde: '2026-02-01', corriente: 0.1682, nomMensual: 0.0130391, nomMensualMora: 0.01892458 },
-  { desde: '2026-03-01', corriente: 0.1701, nomMensual: 0.0131763, nomMensualMora: 0.01911761 },
-  { desde: '2026-04-01', corriente: 0.1784, nomMensual: 0.01377324, nomMensualMora: 0.01995617 }
+  { desde: '2018-01-01', corriente: 0.2069, nomMensual: 0.01579406, nomMensualMora: 0.0258625 },
+  { desde: '2018-02-01', corriente: 0.2101, nomMensual: 0.01601822, nomMensualMora: 0.0262625 },
+  { desde: '2018-03-01', corriente: 0.2068, nomMensual: 0.01578704, nomMensualMora: 0.02585 },
+  { desde: '2018-04-01', corriente: 0.2048, nomMensual: 0.01564666, nomMensualMora: 0.0256 },
+  { desde: '2018-05-01', corriente: 0.2044, nomMensual: 0.01561855, nomMensualMora: 0.02555 },
+  { desde: '2018-06-01', corriente: 0.2028, nomMensual: 0.01550606, nomMensualMora: 0.02535 },
+  { desde: '2018-07-01', corriente: 0.2003, nomMensual: 0.01533, nomMensualMora: 0.0250375 },
+  { desde: '2018-08-01', corriente: 0.1994, nomMensual: 0.01526654, nomMensualMora: 0.024925 },
+  { desde: '2018-09-01', corriente: 0.1981, nomMensual: 0.0151748, nomMensualMora: 0.0247625 },
+  { desde: '2018-10-01', corriente: 0.1963, nomMensual: 0.01504762, nomMensualMora: 0.0245375 },
+  { desde: '2018-11-01', corriente: 0.1949, nomMensual: 0.01494858, nomMensualMora: 0.0243625 },
+  { desde: '2018-12-01', corriente: 0.194, nomMensual: 0.01488485, nomMensualMora: 0.02425 },
+  { desde: '2019-01-01', corriente: 0.1916, nomMensual: 0.0147147, nomMensualMora: 0.02395 },
+  { desde: '2019-02-01', corriente: 0.197, nomMensual: 0.0150971, nomMensualMora: 0.024625 },
+  { desde: '2019-03-01', corriente: 0.1937, nomMensual: 0.0148636, nomMensualMora: 0.0242125 },
+  { desde: '2019-04-01', corriente: 0.1932, nomMensual: 0.01482817, nomMensualMora: 0.02415 },
+  { desde: '2019-05-01', corriente: 0.1934, nomMensual: 0.01484235, nomMensualMora: 0.024175 },
+  { desde: '2019-06-01', corriente: 0.193, nomMensual: 0.014814, nomMensualMora: 0.024125 },
+  { desde: '2019-07-01', corriente: 0.1928, nomMensual: 0.01479982, nomMensualMora: 0.0241 },
+  { desde: '2019-08-01', corriente: 0.1932, nomMensual: 0.01482817, nomMensualMora: 0.02415 },
+  { desde: '2019-09-01', corriente: 0.1932, nomMensual: 0.01482817, nomMensualMora: 0.02415 },
+  { desde: '2019-10-01', corriente: 0.191, nomMensual: 0.01467212, nomMensualMora: 0.023875 },
+  { desde: '2019-11-01', corriente: 0.1903, nomMensual: 0.01462241, nomMensualMora: 0.0237875 },
+  { desde: '2019-12-01', corriente: 0.1891, nomMensual: 0.01453713, nomMensualMora: 0.0236375 },
+  { desde: '2020-01-01', corriente: 0.1877, nomMensual: 0.01443754, nomMensualMora: 0.0234625 },
+  { desde: '2020-02-01', corriente: 0.1906, nomMensual: 0.01464372, nomMensualMora: 0.023825 },
+  { desde: '2020-03-01', corriente: 0.1895, nomMensual: 0.01456557, nomMensualMora: 0.0236875 },
+  { desde: '2020-04-01', corriente: 0.1869, nomMensual: 0.01438059, nomMensualMora: 0.0233625 },
+  { desde: '2020-05-01', corriente: 0.1819, nomMensual: 0.01402381, nomMensualMora: 0.0227375 },
+  { desde: '2020-06-01', corriente: 0.1812, nomMensual: 0.01397375, nomMensualMora: 0.02265 },
+  { desde: '2020-07-01', corriente: 0.1812, nomMensual: 0.01397375, nomMensualMora: 0.02265 },
+  { desde: '2020-08-01', corriente: 0.1829, nomMensual: 0.01409528, nomMensualMora: 0.0228625 },
+  { desde: '2020-09-01', corriente: 0.1835, nomMensual: 0.01413813, nomMensualMora: 0.0229375 },
+  { desde: '2020-10-01', corriente: 0.1809, nomMensual: 0.01395229, nomMensualMora: 0.0226125 },
+  { desde: '2020-11-01', corriente: 0.1784, nomMensual: 0.01377324, nomMensualMora: 0.0223 },
+  { desde: '2020-12-01', corriente: 0.1446, nomMensual: 0.01205, nomMensualMora: 0.018075 },  // EXTRAORDINARIA COVID — SFC Res. 2094/2020
+  { desde: '2021-01-01', corriente: 0.1732, nomMensual: 0.0133997, nomMensualMora: 0.02165 },
+  { desde: '2021-02-01', corriente: 0.1754, nomMensual: 0.01355792, nomMensualMora: 0.021925 },
+  { desde: '2021-03-01', corriente: 0.1741, nomMensual: 0.01346446, nomMensualMora: 0.0217625 },
+  { desde: '2021-04-01', corriente: 0.1731, nomMensual: 0.01339251, nomMensualMora: 0.0216375 },
+  { desde: '2021-05-01', corriente: 0.1722, nomMensual: 0.0133277, nomMensualMora: 0.021525 },
+  { desde: '2021-06-01', corriente: 0.1721, nomMensual: 0.01332049, nomMensualMora: 0.0215125 },
+  { desde: '2021-07-01', corriente: 0.1718, nomMensual: 0.01329888, nomMensualMora: 0.021475 },
+  { desde: '2021-08-01', corriente: 0.1724, nomMensual: 0.0133421, nomMensualMora: 0.02155 },
+  { desde: '2021-09-01', corriente: 0.1719, nomMensual: 0.01330608, nomMensualMora: 0.0214875 },
+  { desde: '2021-10-01', corriente: 0.1708, nomMensual: 0.01322679, nomMensualMora: 0.02135 },
+  { desde: '2021-11-01', corriente: 0.1727, nomMensual: 0.01336371, nomMensualMora: 0.0215875 },
+  { desde: '2021-12-01', corriente: 0.1746, nomMensual: 0.01350042, nomMensualMora: 0.021825 },
+  { desde: '2022-01-01', corriente: 0.1766, nomMensual: 0.01364411, nomMensualMora: 0.022075 },
+  { desde: '2022-02-01', corriente: 0.183, nomMensual: 0.01410242, nomMensualMora: 0.022875 },
+  { desde: '2022-03-01', corriente: 0.1847, nomMensual: 0.01422378, nomMensualMora: 0.0230875 },
+  { desde: '2022-04-01', corriente: 0.1905, nomMensual: 0.01463662, nomMensualMora: 0.0238125 },
+  { desde: '2022-05-01', corriente: 0.1971, nomMensual: 0.01510416, nomMensualMora: 0.0246375 },
+  { desde: '2022-06-01', corriente: 0.204, nomMensual: 0.01559044, nomMensualMora: 0.0255 },
+  { desde: '2022-07-01', corriente: 0.2128, nomMensual: 0.01620693, nomMensualMora: 0.0266 },
+  { desde: '2022-08-01', corriente: 0.2221, nomMensual: 0.01685401, nomMensualMora: 0.0277625 },
+  { desde: '2022-09-01', corriente: 0.235, nomMensual: 0.01774413, nomMensualMora: 0.029375 },
+  { desde: '2022-10-01', corriente: 0.2461, nomMensual: 0.01850326, nomMensualMora: 0.0307625 },
+  { desde: '2022-11-01', corriente: 0.2578, nomMensual: 0.01929674, nomMensualMora: 0.032225 },
+  { desde: '2022-12-01', corriente: 0.2764, nomMensual: 0.02054434, nomMensualMora: 0.03455 },
+  { desde: '2023-01-01', corriente: 0.2884, nomMensual: 0.02134044, nomMensualMora: 0.03605 },
+  { desde: '2023-02-01', corriente: 0.3018, nomMensual: 0.02222141, nomMensualMora: 0.037725 },
+  { desde: '2023-03-01', corriente: 0.3084, nomMensual: 0.02265227, nomMensualMora: 0.03855 },
+  { desde: '2023-04-01', corriente: 0.3139, nomMensual: 0.02300981, nomMensualMora: 0.0392375 },
+  { desde: '2023-05-01', corriente: 0.3027, nomMensual: 0.02228028, nomMensualMora: 0.0378375 },
+  { desde: '2023-06-01', corriente: 0.2976, nomMensual: 0.02194618, nomMensualMora: 0.0372 },
+  { desde: '2023-07-01', corriente: 0.2936, nomMensual: 0.0216833, nomMensualMora: 0.0367 },
+  { desde: '2023-08-01', corriente: 0.2875, nomMensual: 0.02128096, nomMensualMora: 0.0359375 },
+  { desde: '2023-09-01', corriente: 0.2803, nomMensual: 0.02080382, nomMensualMora: 0.0350375 },
+  { desde: '2023-10-01', corriente: 0.2653, nomMensual: 0.01980183, nomMensualMora: 0.0331625 },
+  { desde: '2023-11-01', corriente: 0.2552, nomMensual: 0.01912099, nomMensualMora: 0.0319 },
+  { desde: '2023-12-01', corriente: 0.2504, nomMensual: 0.01879567, nomMensualMora: 0.0313 },
+  { desde: '2024-01-01', corriente: 0.2332, nomMensual: 0.01762044, nomMensualMora: 0.02915 },
+  { desde: '2024-02-01', corriente: 0.2331, nomMensual: 0.01761357, nomMensualMora: 0.0291375 },
+  { desde: '2024-03-01', corriente: 0.222, nomMensual: 0.01684707, nomMensualMora: 0.02775 },
+  { desde: '2024-04-01', corriente: 0.2206, nomMensual: 0.01674995, nomMensualMora: 0.027575 },
+  { desde: '2024-05-01', corriente: 0.2102, nomMensual: 0.01602522, nomMensualMora: 0.026275 },
+  { desde: '2024-06-01', corriente: 0.2056, nomMensual: 0.01570284, nomMensualMora: 0.0257 },
+  { desde: '2024-07-01', corriente: 0.1966, nomMensual: 0.01506883, nomMensualMora: 0.024575 },
+  { desde: '2024-08-01', corriente: 0.1947, nomMensual: 0.01493442, nomMensualMora: 0.0243375 },
+  { desde: '2024-09-01', corriente: 0.1923, nomMensual: 0.01476436, nomMensualMora: 0.0240375 },
+  { desde: '2024-10-01', corriente: 0.1878, nomMensual: 0.01444466, nomMensualMora: 0.023475 },
+  { desde: '2024-11-01', corriente: 0.1759, nomMensual: 0.01359384, nomMensualMora: 0.0219875 },
+  { desde: '2024-12-01', corriente: 0.1659, nomMensual: 0.01287275, nomMensualMora: 0.0207375 },
+  { desde: '2025-01-01', corriente: 0.1659, nomMensual: 0.01287275, nomMensualMora: 0.0207375 },
+  { desde: '2025-02-01', corriente: 0.1753, nomMensual: 0.01355074, nomMensualMora: 0.0219125 },
+  { desde: '2025-03-01', corriente: 0.1661, nomMensual: 0.01288723, nomMensualMora: 0.0207625 },
+  { desde: '2025-04-01', corriente: 0.1708, nomMensual: 0.01322679, nomMensualMora: 0.02135 },
+  { desde: '2025-05-01', corriente: 0.1731, nomMensual: 0.01339251, nomMensualMora: 0.0216375 },
+  { desde: '2025-06-01', corriente: 0.1703, nomMensual: 0.01319073, nomMensualMora: 0.0212875 },
+  { desde: '2025-07-01', corriente: 0.1652, nomMensual: 0.01282206, nomMensualMora: 0.02065 },
+  { desde: '2025-08-01', corriente: 0.1678, nomMensual: 0.01301019, nomMensualMora: 0.020975 },
+  { desde: '2025-09-01', corriente: 0.1667, nomMensual: 0.01293064, nomMensualMora: 0.0208375 },
+  { desde: '2025-10-01', corriente: 0.1624, nomMensual: 0.01261902, nomMensualMora: 0.0203 },
+  { desde: '2025-11-01', corriente: 0.1666, nomMensual: 0.01292341, nomMensualMora: 0.020825 },
+  { desde: '2025-12-01', corriente: 0.1668, nomMensual: 0.01293788, nomMensualMora: 0.02085 },
+  { desde: '2026-01-01', corriente: 0.1624, nomMensual: 0.01261902, nomMensualMora: 0.0203 },
+  { desde: '2026-02-01', corriente: 0.1682, nomMensual: 0.0130391, nomMensualMora: 0.021025 },
+  { desde: '2026-03-01', corriente: 0.1701, nomMensual: 0.0131763, nomMensualMora: 0.0212625 },
+  { desde: '2026-04-01', corriente: 0.1784, nomMensual: 0.01377324, nomMensualMora: 0.0223 }
 ];
 
 // ── ENTRY POINT ──────────────────────────────────────────────────────────────
@@ -129,6 +129,13 @@ function generarLiquidacionSheet(formulario) {
   var tipo = formulario.tipoInteres;
   if (tipo !== 'CIVIL' && tipo !== 'CORRIENTE' && tipo !== 'MORATORIO')
     throw new Error('Tipo de interés inválido.');
+
+  // Metodología de conversión de tasa
+  // NOMINAL: MoraNom/12 × días/30  — juzgados civiles y comerciales
+  // EFECTIVA: (1+TEA)^(1/12)-1 × días/30 — juzgados administrativos
+  var metodo = formulario.metodo || 'NOMINAL';
+  if (metodo !== 'NOMINAL' && metodo !== 'EFECTIVA')
+    metodo = 'NOMINAL';
 
   var agencias = formulario.agencias ? parseFloat(formulario.agencias.replace(/\./g, '')) : 0;
   var costas   = formulario.costas   ? parseFloat(formulario.costas.replace(/\./g, ''))   : 0;
@@ -198,22 +205,44 @@ function generarLiquidacionSheet(formulario) {
     var hasta = cortesOk[ci];
     if (hasta.getTime() < desde.getTime()) continue;
 
-    // Días inclusive: Fin - Ini + 1
-    var dias = Math.round((hasta.getTime() - desde.getTime()) / 86400000) + 1;
+    // Regla de días (verificada contra autos judiciales):
+    // - Mes completo (día 1 al último del mes): siempre 30 días
+    // - Primer período parcial: Fin - Inicio (sin contar el día de inicio de mora)
+    // - Demás períodos parciales: Fin - Inicio + 1 (ambos extremos inclusive)
+    var ultimoDiaMesActual = new Date(desde.getFullYear(), desde.getMonth()+1, 0);
+    var esMesCompleto = (desde.getDate() === 1 &&
+      hasta.getDate() === ultimoDiaMesActual.getDate() &&
+      hasta.getTime() < fechaFin.getTime());
+    var dias;
+    if (esMesCompleto) {
+      dias = 30;
+    } else if (ci === 0) {
+      dias = Math.round((hasta.getTime() - desde.getTime()) / 86400000);
+    } else {
+      dias = Math.round((hasta.getTime() - desde.getTime()) / 86400000) + 1;
+    }
 
     // Tasa mensual según tipo
     var tasaMens;
     var ibcTea = 0;
     if (tipo === 'CIVIL') {
-      tasaMens = 0.06 / 12;  // 0.5% mensual fijo
+      // Civil: 6% EA, interés simple — siempre proporcional sin importar metodología
       ibcTea   = 0.06;
+      tasaMens = 0.06 / 12;  // 0.5% mensual fijo
     } else {
-      var ibc  = buscarIBC(desde);
-      ibcTea   = ibc.corriente;
-      tasaMens = (tipo === 'MORATORIO') ? ibc.nomMensualMora : ibc.nomMensual;
+      var ibc = buscarIBC(desde);
+      ibcTea  = ibc.corriente;
+      if (metodo === 'EFECTIVA') {
+        // Juzgados administrativos: tasa mensual efectiva (1+TEA)^(1/12)-1
+        var teaAplicada = (tipo === 'MORATORIO') ? ibc.corriente * 1.5 : ibc.corriente;
+        tasaMens = Math.pow(1 + teaAplicada, 1/12) - 1;
+      } else {
+        // Juzgados civiles/comerciales: tasa nominal mensual MoraNom/12
+        tasaMens = (tipo === 'MORATORIO') ? ibc.nomMensualMora : ibc.nomMensual;
+      }
     }
 
-    // Interés del tramo
+    // Interés del tramo: capital × tasa_mensual × (días/30)
     var interes = capital * tasaMens * (dias / 30);
     interesAcum += interes;
 
@@ -243,6 +272,9 @@ function generarLiquidacionSheet(formulario) {
       dias:        dias,
       tasaMens:    tasaMens,
       ibcTea:      ibcTea,
+      ibcAplicado: tipo === 'CIVIL'
+                     ? 0.06
+                     : (tipo === 'MORATORIO' ? ibcTea * 1.5 : ibcTea),
       capitalBase: capital + abCap,
       interes:     interes,
       abono:       abonoDia,
@@ -263,6 +295,9 @@ function generarLiquidacionSheet(formulario) {
     'CORRIENTE': 'Corriente (IBC SFC)',
     'MORATORIO': 'Moratorio (IBC x 1.5 — Art. 884 C.Co)'
   }[tipo];
+  var etiqMetodo = metodo === 'EFECTIVA'
+    ? '(1+TEA)^(1/12)-1 x dias/30'
+    : 'MoraNom/12 x dias/30';
 
   var intFinal  = Math.round(interesAcum * 100) / 100;
   var capFinal  = Math.round(capital * 100) / 100;
@@ -283,6 +318,8 @@ function generarLiquidacionSheet(formulario) {
       '<td>' + fd(l.desde) + '</td>' +
       '<td>' + fd(l.hasta) + '</td>' +
       '<td class="n">' + l.dias + '</td>' +
+      '<td class="n">' + (l.ibcTea*100).toFixed(2) + '%</td>' +
+      '<td class="n">' + (l.ibcAplicado*100).toFixed(2) + '%</td>' +
       '<td class="n">' + (l.tasaMens*100).toFixed(6) + '%</td>' +
       '<td class="n">' + fmt(l.capitalBase) + '</td>' +
       '<td class="n">' + fmt(l.interes) + '</td>' +
@@ -294,11 +331,11 @@ function generarLiquidacionSheet(formulario) {
     '</tr>';
   }).join('');
 
-  var tfoot = '<tr class="sub"><td colspan="9" class="r">Capital final</td><td colspan="2" class="n">' + fmt(capFinal) + '</td></tr>' +
-    '<tr class="sub"><td colspan="9" class="r">Intereses</td><td colspan="2" class="n">' + fmt(intFinal) + '</td></tr>';
-  if (agencias > 0) tfoot += '<tr class="sub"><td colspan="9" class="r">Agencias en costas</td><td colspan="2" class="n">' + fmt(agencias) + '</td></tr>';
-  if (costas   > 0) tfoot += '<tr class="sub"><td colspan="9" class="r">Costas judiciales</td><td colspan="2" class="n">' + fmt(costas) + '</td></tr>';
-  tfoot += '<tr class="tot"><td colspan="9" class="r">GRAN TOTAL</td><td colspan="2" class="n">' + fmt(granTotal) + '</td></tr>';
+  var tfoot = '<tr class="sub"><td colspan="11" class="r">Capital final</td><td colspan="2" class="n">' + fmt(capFinal) + '</td></tr>' +
+    '<tr class="sub"><td colspan="11" class="r">Intereses</td><td colspan="2" class="n">' + fmt(intFinal) + '</td></tr>';
+  if (agencias > 0) tfoot += '<tr class="sub"><td colspan="11" class="r">Agencias en costas</td><td colspan="2" class="n">' + fmt(agencias) + '</td></tr>';
+  if (costas   > 0) tfoot += '<tr class="sub"><td colspan="11" class="r">Costas judiciales</td><td colspan="2" class="n">' + fmt(costas) + '</td></tr>';
+  tfoot += '<tr class="tot"><td colspan="11" class="r">GRAN TOTAL</td><td colspan="2" class="n">' + fmt(granTotal) + '</td></tr>';
 
   var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Liquidacion de Intereses</title>' +
   '<style>' +
@@ -326,6 +363,7 @@ function generarLiquidacionSheet(formulario) {
   '<button class="btn-pdf" onclick="window.print()">⬇ Descargar PDF</button>' +
   '<table class="res">' +
     '<tr><td>Tipo de interes aplicado</td><td>' + etiqueta + '</td></tr>' +
+    '<tr><td>Metodologia</td><td>' + (metodo === 'EFECTIVA' ? 'Efectiva mensual — juzgados administrativos' : 'Nominal mensual — juzgados civiles y comerciales') + '</td></tr>' +
     '<tr><td>Valor de la deuda</td><td>' + fmt(capitalOriginal) + '</td></tr>' +
     '<tr><td>Fecha en que inicio la mora</td><td>' + fd(fechaInicio) + '</td></tr>' +
     '<tr><td>Fecha pago</td><td>' + fd(fechaFin) + '</td></tr>' +
@@ -335,7 +373,8 @@ function generarLiquidacionSheet(formulario) {
   '</table>' +
   '<table class="det">' +
     '<thead><tr>' +
-      '<th>Desde</th><th>Hasta</th><th>Dias</th><th>Tasa Mens %</th>' +
+      '<th>Desde</th><th>Hasta</th><th>Dias</th>' +
+      '<th>IBC Corr %</th><th>Tasa aplicada %</th><th>Tasa Mens %</th>' +
       '<th>Capital base</th><th>Interes</th>' +
       '<th>Abono</th><th>A intereses</th><th>A capital</th>' +
       '<th>Saldo intereses</th><th>Saldo capital</th>' +
