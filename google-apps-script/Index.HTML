@@ -183,29 +183,29 @@
     <p>Liquidador de intereses civiles, corrientes y moratorios</p>
   </div>
   <div class="content">
- 
+
     <div class="info-metodologia">
       <strong>Metodología:</strong> Tasa diaria = <strong>(1 + TEA)^(1/365) − 1</strong>
       aplicada siempre sobre el capital original sin capitalizar (anatocismo prohibido — Art. 1617 C.C.).
       Interés civil: proporcional simple. IBC: certificado por la SFC cada ~2 meses.
       Años bisiestos: 366 días automático.
     </div>
- 
+
     <div class="disclaimer">
       ⚠️ <strong>Aviso:</strong> Herramienta orientativa. No sustituye el criterio del juez ni constituye
       asesoramiento legal. Verifique las tasas con la certificación oficial de la SFC vigente para cada período.
     </div>
- 
+
     <div id="successMessage"></div>
     <div id="errorMessage"></div>
     <div id="loading">⏳ Generando liquidación en Google Sheets...</div>
- 
+
     <form id="formulario">
- 
+
       <!-- TIPO -->
       <p class="seccion-titulo">Régimen de interés *</p>
       <div class="tipo-opciones">
- 
+
         <label class="tipo-card" id="card-CIVIL" onclick="seleccionarTipo('CIVIL')">
           <input type="radio" name="tipoInteres" value="CIVIL" id="r-CIVIL">
           <span class="tipo-badge badge-civil">CIVIL</span>
@@ -213,7 +213,7 @@
           <div class="tipo-tasa">6% EA fijo</div>
           <div class="tipo-uso">Sentencias · Alimentos · RCE · Obligaciones civiles puras</div>
         </label>
- 
+
         <label class="tipo-card" id="card-CORRIENTE" onclick="seleccionarTipo('CORRIENTE')">
           <input type="radio" name="tipoInteres" value="CORRIENTE" id="r-CORRIENTE">
           <span class="tipo-badge badge-corriente">CORRIENTE</span>
@@ -221,7 +221,7 @@
           <div class="tipo-tasa">IBC SFC (variable)</div>
           <div class="tipo-uso">Ejecutivos comerciales · Interés pactado · Créditos</div>
         </label>
- 
+
         <label class="tipo-card" id="card-MORATORIO" onclick="seleccionarTipo('MORATORIO')">
           <input type="radio" name="tipoInteres" value="MORATORIO" id="r-MORATORIO">
           <span class="tipo-badge badge-moratorio">MORATORIO</span>
@@ -229,9 +229,31 @@
           <div class="tipo-tasa">IBC × 1.5 — usura</div>
           <div class="tipo-uso">Mora en ejecutivos comerciales · Art. 884 C.Co</div>
         </label>
- 
+
       </div>
- 
+
+      <!-- METODOLOGÍA -->
+      <p class="seccion-titulo">Metodología de liquidación *</p>
+      <div class="tipo-opciones" style="grid-template-columns:1fr 1fr">
+
+        <label class="tipo-card" id="card-NOMINAL" onclick="seleccionarMetodo('NOMINAL')">
+          <input type="radio" name="metodo" value="NOMINAL" id="r-NOMINAL">
+          <span class="tipo-badge badge-corriente">CIVIL / COMERCIAL</span>
+          <div class="tipo-titulo">Nominal mensual</div>
+          <div class="tipo-tasa">MoraNom ÷ 12 × días/30</div>
+          <div class="tipo-uso">Juzgados civiles, de familia y comerciales · Mayoría de procesos en Santander</div>
+        </label>
+
+        <label class="tipo-card" id="card-EFECTIVA" onclick="seleccionarMetodo('EFECTIVA')">
+          <input type="radio" name="metodo" value="EFECTIVA" id="r-EFECTIVA">
+          <span class="tipo-badge badge-civil">ADMINISTRATIVO</span>
+          <div class="tipo-titulo">Efectiva mensual</div>
+          <div class="tipo-tasa">(1+TEA)^(1/12)−1 × días/30</div>
+          <div class="tipo-uso">Juzgados administrativos · Contencioso administrativo · CPACA</div>
+        </label>
+
+      </div>
+
       <!-- CAPITAL -->
       <p class="seccion-titulo">Obligación</p>
       <div class="form-group">
@@ -239,7 +261,7 @@
         <input type="text" id="capital" name="capital"
                placeholder="Ej: 60.000.000" required autocomplete="off">
       </div>
- 
+
       <!-- FECHAS -->
       <div class="form-row">
         <div class="form-group">
@@ -257,7 +279,7 @@
           <input type="date" id="fechaFin" name="fechaFin" required>
         </div>
       </div>
- 
+
       <!-- COSTAS -->
       <p class="seccion-titulo">Costas del proceso <span style="font-weight:400;font-size:11px">(opcional)</span></p>
       <div class="form-row">
@@ -270,7 +292,7 @@
           <input type="text" id="costas" name="costas" placeholder="0" autocomplete="off">
         </div>
       </div>
- 
+
       <!-- ABONOS -->
       <div class="abonos-section">
         <h3>Abonos</h3>
@@ -281,18 +303,30 @@
         <div id="abonosContainer"></div>
         <button type="button" class="btn-add-abono" onclick="agregarAbono()">+ Agregar abono</button>
       </div>
- 
+
       <button type="submit" class="btn-submit" id="btnSubmit">
         📄 Generar liquidación en PDF
       </button>
- 
+
     </form>
   </div>
 </div>
- 
+
 <script>
-  var tipoSeleccionado = null;
- 
+  var tipoSeleccionado  = null;
+  var metodoSeleccionado = null;
+
+  function seleccionarMetodo(met) {
+    ['NOMINAL','EFECTIVA'].forEach(function(m) {
+      document.getElementById('r-' + m).checked = (m === met);
+      document.getElementById('card-' + m).classList.toggle('selected', m === met);
+    });
+    metodoSeleccionado = met;
+  }
+
+  // Por defecto: nominal (civiles y comerciales)
+  seleccionarMetodo('NOMINAL');
+
   function seleccionarTipo(tipo) {
     ['CIVIL','CORRIENTE','MORATORIO'].forEach(function(t) {
       document.getElementById('r-' + t).checked = (t === tipo);
@@ -300,9 +334,9 @@
     });
     tipoSeleccionado = tipo;
   }
- 
+
   var contadorAbonos = 0;
- 
+
   function agregarAbono() {
     var container = document.getElementById('abonosContainer');
     var idx = contadorAbonos++;
@@ -314,12 +348,12 @@
       '</div>'
     );
   }
- 
+
   function removerAbono(idx) {
     var el = document.getElementById('abono-' + idx);
     if (el) el.remove();
   }
- 
+
   document.addEventListener('input', function(e) {
     var id = e.target.id, cls = e.target.classList;
     if (cls.contains('abonoValor') || id === 'capital' || id === 'agencias' || id === 'costas') {
@@ -327,30 +361,35 @@
       e.target.value = (/^\d+$/.test(raw) && raw !== '') ? raw.replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '';
     }
   });
- 
+
   document.getElementById('formulario').addEventListener('submit', function(e) {
     e.preventDefault();
- 
+
     if (!tipoSeleccionado) {
       mostrarError('Selecciona el régimen de interés (Civil, Corriente o Moratorio).');
       return;
     }
- 
+    if (!metodoSeleccionado) {
+      mostrarError('Selecciona la metodología de liquidación.');
+      return;
+    }
+
     var fi = document.getElementById('fechaInicio').value;
     var ff = document.getElementById('fechaFin').value;
     if (fi && ff && fi > ff) {
       mostrarError('La fecha de inicio de mora no puede ser posterior a la fecha de pago.');
       return;
     }
- 
+
     var btn = document.getElementById('btnSubmit');
     btn.disabled = true;
     document.getElementById('loading').style.display = 'block';
     document.getElementById('successMessage').style.display = 'none';
     document.getElementById('errorMessage').style.display = 'none';
- 
+
     var formulario = {
       tipoInteres: tipoSeleccionado,
+      metodo:      metodoSeleccionado,
       capital:     document.getElementById('capital').value,
       fechaInicio: fi,
       fechaFin:    ff,
@@ -359,7 +398,7 @@
       abonoFecha:  [],
       abonoValor:  []
     };
- 
+
     var fechasAb  = document.querySelectorAll('.abonoFecha');
     var valoresAb = document.querySelectorAll('.abonoValor');
     fechasAb.forEach(function(el, i) {
@@ -368,7 +407,7 @@
         formulario.abonoValor.push(valoresAb[i].value);
       }
     });
- 
+
     google.script.run
       .withSuccessHandler(function(html) {
         document.getElementById('loading').style.display = 'none';
@@ -393,7 +432,7 @@
       })
       .generarLiquidacionSheet(formulario);
   });
- 
+
   function mostrarError(msg) {
     var el = document.getElementById('errorMessage');
     el.style.display = 'block';
