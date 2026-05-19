@@ -108,7 +108,8 @@ var TASAS_IBC = [
   { desde: '2026-01-01', corriente: 0.1624, nomMensual: 0.01261902, nomMensualMora: 0.0203 },
   { desde: '2026-02-01', corriente: 0.1682, nomMensual: 0.0130391, nomMensualMora: 0.021025 },
   { desde: '2026-03-01', corriente: 0.1701, nomMensual: 0.0131763, nomMensualMora: 0.0212625 },
-  { desde: '2026-04-01', corriente: 0.1784, nomMensual: 0.01377324, nomMensualMora: 0.0223 }
+  { desde: '2026-04-01', corriente: 0.1784, nomMensual: 0.01377324, nomMensualMora: 0.0223 },
+  { desde: '2026-05-01', corriente: 0.1878, nomMensual: 0.015650, nomMensualMora: 0.023475 },
 ];
 
 // ── ENTRY POINT ──────────────────────────────────────────────────────────────
